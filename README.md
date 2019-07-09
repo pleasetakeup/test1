@@ -25,85 +25,84 @@ To use this library, first download the library file, paste it into the \Arduino
 
 ```C++	
 
-#include <DFRobot_PN532.h>
+#include <DFRobot_PN532.h
 
 /*!
-     * @brief read a page of data from the target card which  type is mifareclassic(there are 16 bytes of data per page).
-     * @param The number of pages that you want to read data.
-	 * @param A buffer that stores data.
-     * @return Status code. 
-     */   
+ * @brief read a page of data from the target card which  type is mifareclassic(there are 16 bytes of data per page).
+ * @param The number of pages that you want to read data.
+ * @param A buffer that stores data.
+ * @return Status code. 
+ */   
 	 uint8_t readData(uint8_t *buffer,uint8_t block);
 
-    /*!
-     * @brief read a data from the  page which you want.
-     * @param page: the number of pages you want to read data.
-     * @param num: the offset of the data that you want. 
-     * @return a data from the card. 
-     */  
+/*!
+ * @brief read a data from the  page which you want.
+ * @param page: the number of pages you want to read data.
+ * @param num: the offset of the data that you want. 
+ * @return a data from the card. 
+ */  
      int  readData(int page, uint8_t num);
-    /*!
-     * @brief write a data to card which  type is mifareclassic.
-     * @param page: the number of pages you want to writes the data.
-     * @param num: the offset of the data. 
-     * @param data: the data content.
-     */  
+/*!
+ * @brief write a data to card which  type is mifareclassic.
+ * @param page: the number of pages you want to writes the data.
+ * @param num: the offset of the data. 
+ * @param data: the data content.
+ */  
      void  writeData (int page, uint8_t num ,uint8_t data);
-    /*!
-     * @brief find out if there is a card which  type is mifareclassic. 
-     * @return True means find out a card.
-     */ 
+/*!
+ * @brief find out if there is a card which  type is mifareclassic. 
+ * @return True means find out a card.
+ */ 
      bool  scan(void);
-    /*!
-     * @brief find out if there is a specific card which  type is mifareclassic.
-     * @param a string of card Numbers.
-     * @return True means success.
-     */   
+/*!
+ * @brief find out if there is a specific card which  type is mifareclassic.
+ * @param a string of card Numbers.
+ * @return True means success.
+ */   
      bool  scan(String nfcuid);
-    /*!
-     * @brief get the id of the card .
-     * @return  the card's id.
-     */  
+/*!
+ * @brief get the id of the card .
+ * @return  the card's id.
+ */  
      String  readUid();
-     /*!
-     * @brief write sixteen data on the card which  type is mifareclassic.
-     * @param block: the number of pages you want to write data on.
-     * @param data[]: the name of arry name which has sixteen data . 
-     */  
+/*!
+ * @brief write sixteen data on the card which  type is mifareclassic.
+ * @param block: the number of pages you want to write data on.
+ * @param data[]: the name of arry name which has sixteen data . 
+ */  
      bool  writeData(int block, uint8_t data[]);
-	 /*!
-     * @brief read a set of data on the card which  type is Ultralight.
-     * @param block: the number of pages you want to read.
-     * @param *buffer: A buffer that stores data . 
-	 * @return error or correct message code
-     */
+/*!
+ * @brief read a set of data on the card which  type is Ultralight.
+ * @param block: the number of pages you want to read.
+ * @param *buffer: A buffer that stores data . 
+ * @return error or correct message code
+ */
 	 uint8_t readUltralight(uint8_t *buffer,uint8_t block);
-	 /*!
-     * @brief Write a set of data into the card which  type is Ultralight.
-     * @param block: the number of pages you want to write data on.
-     * @param *buffer: the name of arry name which has four data . 
-	 * @return error or correct message code
-     */
+/*!
+ * @brief Write a set of data into the card which  type is Ultralight.
+ * @param block: the number of pages you want to write data on.
+ * @param *buffer: the name of arry name which has four data . 
+ * @return error or correct message code
+ */
 	 bool  writeUltralight(int block, uint8_t data[]);
-	 /*!
-     * @brief Reads a set of data from a card which  type is NTAG.
-     * @param block: the number of pages you want to read.
-     * @param *buffer:  A buffer that stores data . 
-	 * @return error or correct message code.
-     */
+/*!
+ * @brief Reads a set of data from a card which  type is NTAG.
+ * @param block: the number of pages you want to read.
+ * @param *buffer:  A buffer that stores data . 
+ * @return error or correct message code.
+ */
 	 uint8_t readNTAG(uint8_t *buffer,uint8_t block);
-	 /*!
-     * @brief Write a set of data into the card which  type is NTAG.
-     * @param block: the number of pages you want to write data on.
-     * @param *buffer: the name of arry name which has four data . 
-	 * @return error or correct message code
-     */
+/*!
+ * @brief Write a set of data into the card which  type is NTAG.
+ * @param block: the number of pages you want to write data on.
+ * @param *buffer: the name of arry name which has four data . 
+ * @return error or correct message code
+ */
 	 bool  writeNTAG(int block, uint8_t data[]);
-	 /*!
-     * @brief Read the basic information of the card.
-	 * @return information from the card.
-     */
-	 struct card getAQTA();
+/*!
+ * @brief Read the basic information of the card.
+ */
+	 struct card getAQTA（）;
 	 
 ```
 ## Support
