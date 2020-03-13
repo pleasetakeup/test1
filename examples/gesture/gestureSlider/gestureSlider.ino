@@ -81,11 +81,11 @@ void drawT(uint8_t dir , uint8_t pointnum) {
     screen.fillRect(20 + 30, screen.height() / 2 - 8, 70, 16, ui.bgColor);
   }
   else if (dir == 0 && pointnum == 2) {
-    screen.fillTriangle(screen.width() / 2 - 15, screen.height() / 20, screen.width() / 2 - 15 - 15, screen.height() / 20 + 24, screen.width() / 2 + 15 - 15, screen.height() / 20 + 24, 0xf800);
-    screen.fillRect(screen.width() / 2 - 8 - 15, screen.height() / 20 + 24, 16, 70, 0xf800);
+    screen.fillTriangle(screen.width() / 2 - 15, screen.height() / 20, screen.width() / 2 - 15 - 15, screen.height() / 20 + 24, screen.width() / 2 + 15 - 15, screen.height() / 20 + 24, COLOR_RGB565_GREEN);
+    screen.fillRect(screen.width() / 2 - 8 - 15, screen.height() / 20 + 24, 16, 70, COLOR_RGB565_GREEN);
 
-    screen.fillTriangle(screen.width() / 2 + 15, screen.height() / 20, screen.width() / 2 - 15 + 15, screen.height() / 20 + 24, screen.width() / 2 + 15 + 15, screen.height() / 20 + 24, 0xf800);
-    screen.fillRect(screen.width() / 2 - 8 + 15, screen.height() / 20 + 24, 16, 70, 0xf800);
+    screen.fillTriangle(screen.width() / 2 + 15, screen.height() / 20, screen.width() / 2 - 15 + 15, screen.height() / 20 + 24, screen.width() / 2 + 15 + 15, screen.height() / 20 + 24, COLOR_RGB565_GREEN);
+    screen.fillRect(screen.width() / 2 - 8 + 15, screen.height() / 20 + 24, 16, 70, COLOR_RGB565_GREEN);
     delay(500);
     screen.fillTriangle(screen.width() / 2 - 15, screen.height() / 20, screen.width() / 2 - 15 - 15, screen.height() / 20 + 24, screen.width() / 2 + 15 - 15, screen.height() / 20 + 24, ui.bgColor);
     screen.fillRect(screen.width() / 2 - 8 - 15, screen.height() / 20 + 24, 16, 70, ui.bgColor);
@@ -95,21 +95,21 @@ void drawT(uint8_t dir , uint8_t pointnum) {
 
   }
   else if (dir == 1 && pointnum == 2) {
-    screen.fillTriangle(screen.width() - 20, screen.height() / 2 - 15, screen.width() - 50, screen.height() / 2 - 15 - 15, screen.width() - 50, screen.height() / 2 + 15 - 15, 0xf800);
-    screen.fillRect(screen.width() - 50 - 70, screen.height() / 2 - 8 - 15, 70, 16, 0xf800);
-    screen.fillTriangle(screen.width() - 20, screen.height() / 2 + 15, screen.width() - 50, screen.height() / 2 - 15 + 15, screen.width() - 50, screen.height() / 2 + 15 + 15, 0xf800);
-    screen.fillRect(screen.width() - 50 - 70, screen.height() / 2 - 8 + 15, 70, 16, 0xf800);
+    screen.fillTriangle(screen.width() - 20, screen.height() / 2 - 15, screen.width() - 50, screen.height() / 2 - 15 - 15, screen.width() - 50, screen.height() / 2 + 15 - 15, COLOR_RGB565_GREEN);
+    screen.fillRect(screen.width() - 50 - 70, screen.height() / 2 - 8 - 15, 70, 16, COLOR_RGB565_GREEN);
+    screen.fillTriangle(screen.width() - 20, screen.height() / 2 + 15, screen.width() - 50, screen.height() / 2 - 15 + 15, screen.width() - 50, screen.height() / 2 + 15 + 15, COLOR_RGB565_GREEN);
+    screen.fillRect(screen.width() - 50 - 70, screen.height() / 2 - 8 + 15, 70, 16, COLOR_RGB565_GREEN);
     delay(500);
     screen.fillTriangle(screen.width() - 20, screen.height() / 2 - 15, screen.width() - 50, screen.height() / 2 - 15 - 15, screen.width() - 50, screen.height() / 2 + 15 - 15,  ui.bgColor);
     screen.fillRect(screen.width() - 50 - 70, screen.height() / 2 - 8 - 15, 70, 16,  ui.bgColor);
     screen.fillTriangle(screen.width() - 20, screen.height() / 2 + 15, screen.width() - 50, screen.height() / 2 - 15 + 15, screen.width() - 50, screen.height() / 2 + 15 + 15,  ui.bgColor);
-    screen.fillRect(screen.width() - 50 - 70, screen.height() / 2 - 8+ 15, 70, 16,  ui.bgColor);
+    screen.fillRect(screen.width() - 50 - 70, screen.height() / 2 - 8 + 15, 70, 16,  ui.bgColor);
   }
   else if (dir == 2 && pointnum == 2) {
-    screen.fillTriangle(screen.width() / 2 - 15, screen.height() - 50, screen.width() / 2 - 15 - 15, screen.height() - 50 - 30, screen.width() / 2 + 15 - 15, screen.height() - 50 - 30, 0xf800);
-    screen.fillRect(screen.width() / 2 - 8 - 15, screen.height() - 50 - 30 - 70, 16, 70, 0xf800);
-    screen.fillTriangle(screen.width() / 2 + 15, screen.height() - 50, screen.width() / 2 - 15 + 15, screen.height() - 50 - 30, screen.width() / 2 + 15 + 15, screen.height() - 50 - 30, 0xf800);
-    screen.fillRect(screen.width() / 2 - 8 + 15, screen.height() - 50 - 30 - 70, 16, 70, 0xf800);
+    screen.fillTriangle(screen.width() / 2 - 15, screen.height() - 50, screen.width() / 2 - 15 - 15, screen.height() - 50 - 30, screen.width() / 2 + 15 - 15, screen.height() - 50 - 30, COLOR_RGB565_GREEN);
+    screen.fillRect(screen.width() / 2 - 8 - 15, screen.height() - 50 - 30 - 70, 16, 70, COLOR_RGB565_GREEN);
+    screen.fillTriangle(screen.width() / 2 + 15, screen.height() - 50, screen.width() / 2 - 15 + 15, screen.height() - 50 - 30, screen.width() / 2 + 15 + 15, screen.height() - 50 - 30, COLOR_RGB565_GREEN);
+    screen.fillRect(screen.width() / 2 - 8 + 15, screen.height() - 50 - 30 - 70, 16, 70, COLOR_RGB565_GREEN);
     delay(500);
     screen.fillTriangle(screen.width() / 2 - 15, screen.height() - 50, screen.width() / 2 - 15 - 15, screen.height() - 50 - 30, screen.width() / 2 + 15 - 15, screen.height() - 50 - 30, ui.bgColor);
     screen.fillRect(screen.width() / 2 - 8 - 15, screen.height() - 50 - 30 - 70, 16, 70, ui.bgColor);
@@ -117,23 +117,43 @@ void drawT(uint8_t dir , uint8_t pointnum) {
     screen.fillRect(screen.width() / 2 - 8 + 15, screen.height() - 50 - 30 - 70, 16, 70, ui.bgColor);
   }
   else if (dir == 3 && pointnum == 2) {
-    screen.fillTriangle(20, screen.height() / 2 - 15, 20 + 30, screen.height() / 2 - 15 - 15, 20 + 30, screen.height() / 2 + 15 - 15, 0xf800);
-    screen.fillRect(20 + 30, screen.height() / 2 - 8 - 15, 70, 16, 0xf800);
-    screen.fillTriangle(20, screen.height() / 2 + 15, 20 + 30, screen.height() / 2 - 15 + 15, 20 + 30, screen.height() / 2 + 15 + 15, 0xf800);
-    screen.fillRect(20 + 30, screen.height() / 2 - 8 + 15, 70, 16, 0xf800);
+    screen.fillTriangle(20, screen.height() / 2 - 15, 20 + 30, screen.height() / 2 - 15 - 15, 20 + 30, screen.height() / 2 + 15 - 15, COLOR_RGB565_GREEN);
+    screen.fillRect(20 + 30, screen.height() / 2 - 8 - 15, 70, 16, COLOR_RGB565_GREEN);
+    screen.fillTriangle(20, screen.height() / 2 + 15, 20 + 30, screen.height() / 2 - 15 + 15, 20 + 30, screen.height() / 2 + 15 + 15, COLOR_RGB565_GREEN);
+    screen.fillRect(20 + 30, screen.height() / 2 - 8 + 15, 70, 16, COLOR_RGB565_GREEN);
     delay(500);
     screen.fillTriangle(20, screen.height() / 2 - 15, 20 + 30, screen.height() / 2 - 15 - 15, 20 + 30, screen.height() / 2 + 15 - 15, ui.bgColor);
     screen.fillRect(20 + 30, screen.height() / 2 - 8 - 15, 70, 16, ui.bgColor);
     screen.fillTriangle(20, screen.height() / 2 + 15, 20 + 30, screen.height() / 2 - 15 + 15, 20 + 30, screen.height() / 2 + 15 + 15, ui.bgColor);
     screen.fillRect(20 + 30, screen.height() / 2 - 8 + 15, 70, 16, ui.bgColor);
   }
+  else if (dir == 10 && pointnum == 0) {
+    screen.drawCircleHelper(screen.width() / 2, screen.height() / 2, 100, 10, COLOR_RGB565_BLUE);
+    screen.fillTriangle(screen.width() / 2 - 100, screen.height() / 2 - 24, screen.width() / 2 - 100 - 14, screen.height() / 2, screen.width() / 2 - 100 + 14, screen.height() / 2, COLOR_RGB565_BLUE);
+    screen.fillTriangle(screen.width() / 2 + 100, screen.height() / 2 + 24, screen.width() / 2 + 100 - 14, screen.height() / 2, screen.width() / 2 + 100 + 14, screen.height() / 2, COLOR_RGB565_BLUE);
+    delay(500);
+    screen.drawCircleHelper(screen.width() / 2, screen.height() / 2, 100, 10, ui.bgColor);
+    screen.fillTriangle(screen.width() / 2 - 100, screen.height() / 2 - 24, screen.width() / 2 - 100 - 14, screen.height() / 2, screen.width() / 2 - 100 + 14, screen.height() / 2,  ui.bgColor);
+    screen.fillTriangle(screen.width() / 2 + 100, screen.height() / 2 + 24, screen.width() / 2 + 100 - 14, screen.height() / 2, screen.width() / 2 + 100 + 14, screen.height() / 2,  ui.bgColor);
+
+  }
+  else if (dir == 10 && pointnum == 1) {
+    screen.drawCircleHelper(screen.width() / 2, screen.height() / 2, 100, 5, COLOR_RGB565_BLUE);
+    screen.fillTriangle(screen.width() / 2 - 100, screen.height() / 2 + 24, screen.width() / 2 - 100 - 14, screen.height() / 2, screen.width() / 2 - 100 + 14, screen.height() / 2, COLOR_RGB565_BLUE);
+    screen.fillTriangle(screen.width() / 2 + 100, screen.height() / 2 - 24, screen.width() / 2 + 100 - 14, screen.height() / 2, screen.width() / 2 + 100 + 14, screen.height() / 2, COLOR_RGB565_BLUE);
+    delay(500);
+    screen.drawCircleHelper(screen.width() / 2, screen.height() / 2, 100, 5, ui.bgColor);
+    screen.fillTriangle(screen.width() / 2 - 100, screen.height() / 2 + 24, screen.width() / 2 - 100 - 14, screen.height() / 2, screen.width() / 2 - 100 + 14, screen.height() / 2, ui.bgColor);
+    screen.fillTriangle(screen.width() / 2 + 100, screen.height() / 2 - 24, screen.width() / 2 + 100 - 14, screen.height() / 2, screen.width() / 2 + 100 + 14, screen.height() / 2, ui.bgColor);
+
+  }
 }
 void   refresh() {
   DFRobot_UI:: eGesture_t gesture = ui.getGestures();
-  if (gesture != ui.NONE) {
-    Serial.println(gesture);
-  }
-
+  /* if (gesture != ui.NONE) {
+     Serial.println(gesture);
+    }
+  */
   switch (gesture) {
 
     case ui.DUPGLIDE : {
@@ -159,6 +179,12 @@ void   refresh() {
       } break;
     case ui.SLEFTGLIDE : {
         drawT(3, 1);
+      } break;
+    case ui.DWROTATE : {
+        drawT(10, 0);
+      } break;
+    case ui.DCWROTATE : {
+        drawT(10, 1);
       } break;
     case ui.NONE: {
         return;

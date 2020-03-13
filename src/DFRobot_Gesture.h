@@ -20,29 +20,30 @@ typedef struct{
 	
 }sTouchMessage_t;
 typedef enum {
-	  SCLICK,//0
-	  DDOUBLECLICK,
-	  DLONGPRESSED,
-	  SLEFTGLIDE,//1
-	  SRIGHTGLIDE,//2
-	  SDOWNGLIDE,//3
-	  SUPGLIDE,//4
-    DUPGLIDE,//5
-    DDOWNGLIDE,//6
-    DLEFTGLIDE,//7
-    DRIGHTGLIDE,//8
-    SHRINK,//9
-    MAGNIFY,	 //10
-	  DROTATE,//11
-	  DCLICK,//12
-	  TCLICK,//13
-	  TLEFTGLIDE,//14
-		TRIGHTGLIDE,//15
-	  TDOWNGLIDE,//16
-	  TUPGLIDE,//17
-	  WCLICK,//18
-    PCLICK,//19
-    NONE,//20
+	SCLICK,//0
+	DDOUBLECLICK,//1
+	DLONGPRESSED,//2
+	SLEFTGLIDE,//3
+	SRIGHTGLIDE,//4
+	SDOWNGLIDE,//5
+	SUPGLIDE,//6
+    DUPGLIDE,//7
+    DDOWNGLIDE,//8
+    DLEFTGLIDE,//9
+    DRIGHTGLIDE,//10
+    SHRINK,//11
+    MAGNIFY,	 //12
+	DWROTATE,//13
+	DCWROTATE,//14
+	DCLICK,//15
+	TCLICK,//16
+	TLEFTGLIDE,//17
+	RIGHTGLIDE,//18
+	TDOWNGLIDE,//19
+	TUPGLIDE,//20
+	WCLICK,//21
+    PCLICK,//22
+    NONE,//23
 }eGesture_t;
 
 typedef enum{
@@ -81,6 +82,7 @@ eDirection_t  directionX(uint16_t x1,uint16_t x2,uint16_t x3);
 eDirection_t  directionY(uint16_t y1,uint16_t y2,uint16_t y3);
 eDir_t  pointe(int point1);
 uint8_t bfDistance();
+uint8_t judgeRotate();
 uint16_t maxp(uint16_t num1,uint16_t num2,uint16_t num3);
 uint16_t minp(uint16_t num1,uint16_t num2,uint16_t num3);
 sTouchMessage_t tpDev;
@@ -90,8 +92,8 @@ private:
   uint8_t lastPN = 0; 
   uint8_t release = 0;
   uint16_t change;
-  uint16_t change_x;
-  uint16_t change_y;
+  int16_t change_x;
+  int16_t change_y;
   int distance;
   uint8_t point ;
   eGesture_t lastGesture;

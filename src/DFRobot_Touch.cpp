@@ -81,6 +81,7 @@ void DFRobot_Touch_GTXXXX::begin(uint32_t freq){
 
   _size.xw = ((uint8_t)temp[1] << 8) | (uint8_t)temp[0];
   _size.yh = ((uint8_t)temp[3] << 8) | (uint8_t)temp[2];
+  
   //Serial.println("_size.xw = ");Serial.println(_size.xw);
   //Serial.println("_size.yh = ");Serial.println(_size.yh);
 }
@@ -90,7 +91,6 @@ String DFRobot_Touch_GTXXXX::scan(){
   String s = "";
   memset(_p, 0, sizeof(_p));
   readReg(0x814E, &flag, 1);
-  //Serial.print("flag = ");Serial.println(flag,HEX);
   if((flag & 0x80) ||((flag&0x0F)<6)){
       writeBuf(0x814E, &val, 1);
   }
@@ -113,7 +113,7 @@ String DFRobot_Touch_GTXXXX::scan(){
   if(s.length() == 0){
      s = "255,0,0,0,0 ";
   }
-  delay(10);
+  delay(20);
   _points = s;
   return s;
 }

@@ -109,26 +109,26 @@ uint8_t DFRobot_Gesture::bfDistance(){
 	int y2 = (touchge[1].pointy[0] - touchge[0].pointy[0]);
     distance = sqrtf((unsigned long)x2*x2+(unsigned long)y2*y2);
 
-/*
-for(uint8_t i=0 ;i < 2 ;i++){
-	Serial.print("point");
-	Serial.print(i);
-	Serial.print(": ");
-	for(uint8_t j=0 ;j < 3 ;j++){
-		Serial.print("(");
-	Serial.print(touchge[i].pointx[j]);
-	Serial.print(",");
-	Serial.print(touchge[i].pointy[j]);
-Serial.print(")");
-}
-	Serial.println(" ");
+
+// for(uint8_t i=0 ;i < 2 ;i++){
+	// Serial.print("point");
+	// Serial.print(i);
+	// Serial.print(": ");
+	// for(uint8_t j=0 ;j < 3 ;j++){
+		// Serial.print("(");
+	// Serial.print(touchge[i].pointx[j]);
+	// Serial.print(",");
+	// Serial.print(touchge[i].pointy[j]);
+// Serial.print(")");
+// }
+	// Serial.println(" ");
 	
-}
-    Serial.print("distance2: ");
-  Serial.println(d2);
- Serial.print("distance1: ");
-  Serial.println(distance);
-  */
+// }
+    // Serial.print("distance2: ");
+  // Serial.println(d2);
+ // Serial.print("distance1: ");
+  // Serial.println(distance);
+  
 	change_x = dis_x > olddis_x ?(dis_x - olddis_x):(olddis_x - dis_x);
 	change_y = dis_y > olddis_y ?(dis_y - olddis_y):(olddis_y - dis_y);
 	if(d2 > distance) {
@@ -280,9 +280,54 @@ DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureOne(uint8_t pointOne){
 	else{
 	    return NONE;
 	}
+}
+uint8_t DFRobot_Gesture::judgeRotate(){
+	int16_t x1 ,x2,x3,y1,y2,y3;
+	int px12,py12;
+	int px23,py23;
+	double  concave;
+	bool clockwise;
+	
+	x1 = touchge[0].pointx[0];
+	y1 = 0 - touchge[0].pointy[0];
+	x2 = touchge[0].pointx[1];
+	y2 = 0 - touchge[0].pointy[1];	
+	x3 = touchge[0].pointx[2];
+	y3 = 0 - touchge[0].pointy[2];
+	/*
+	int16_t midDotx = (touchge[0].pointx[0]+touchge[0].pointx[2]) /2;
+    int16_t midDoty = ((0-touchge[0].pointy[0])+(0-touchge[0].pointx[2])) /2;
+    int16_t roundDotx = (touchge[0].pointx[0]+touchge[1].pointx[0]) /2;
+	int16_t roundDoty = ((0-touchge[0].pointy[0])+(0-touchge[1].pointx[0])) /2;
+    disx = (midDotx - x2)*(midDotx - x2);
+	disy = (midDoty - y2)*(midDoty - y2);
+	d1 = sqrtf(disx+disy);
+    disx = (roundDotx - midDotx)*(roundDotx - midDotx);
+	disy = (roundDoty - midDoty)*(roundDoty - midDoty);
+	d2 = sqrtf(disx+disy);
+	
+	if(d2 >d1) concave = true;
+	else  concave = false;
+	
+	
+	if(concave == true && )
+		*/
+	
+	px12 = x2-x1;
+	py12 = y2-y1;
+	
+	px23 = x3-x2;
+	py23 = y3-y2;
+	concave = (x2-x1)*(y3-y1)-(y2-y1)*(x3-x1);
+	if(concave < 0)
+		clockwise = 1;
+	else if(concave > 0) 
+		clockwise = 0;
+    else
+        return 2;	
 
-
-
+	return clockwise;
+	
 }
 DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureTwo(eDir_t pointOne,eDir_t pointTwo){
   uint8_t dir = bfDistance();
@@ -307,8 +352,11 @@ DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureTwo(eDir_t pointOne,eDir_
 	else if(change > 100 && dir == 1){
 	  return MAGNIFY;
 	}
-	else if(change_x>30 &&change_y >30 && change<50){
-	   return DROTATE ;
+	else if(change_x>30 &&change_y >30 && change<80){
+		uint8_t dir1 = judgeRotate();
+		if( dir1 == 1) return DWROTATE;
+	    else if(dir1 == 0)return DCWROTATE;
+		else return NONE;
 	}
 
 	else{

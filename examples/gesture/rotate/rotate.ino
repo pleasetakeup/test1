@@ -1,8 +1,7 @@
 /*!
  * @file UI_gesture.ino
- * @brief 在屏幕指定区域可以识别到用户所使用的手势，手势的名称会显示到文本框内
- * @n 本示例支持的主板有Arduino Uno, Leonardo, Mega2560, FireBeetle-ESP32, FireBeetle-ESP8266, FireBeetle-M0
- * @n 需要文本框显示时，需要点击文本框以使光标移到文本框内
+ * @brief 两根手指左旋转或右旋转 改变显示图片的方向
+ * @n 本示例支持的主板有Mega2560, FireBeetle-ESP32, FireBeetle-ESP8266, FireBeetle-M0
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
  * @author [fengli](li.feng@dfrobot.com)
@@ -17,6 +16,7 @@
 #include "Arduino.h"
 #include "DFRobot_GDL.h"
 #include "DFRobot_Touch.h"
+#include "GrayscaleBitmap1.h"
 /*M0*/
 #if defined ARDUINO_SAM_ZERO
 #define TFT_DC  7
@@ -58,46 +58,45 @@ DFRobot_Touch_GTXXXX touch;
  * @param touch 触摸对象
  */
 DFRobot_UI ui(&screen, &touch);
-
-
-
+int8_t rotate =0;
 void setup()
 {
   
   Serial.begin(9600);
   ui.begin();
-  // 设置UI的主题，有两种主题可供选择 1.CLASSIC ，2.MODERN。
-  ui.setTheme(DFRobot_UI::MODERN);
-  
-  //创建一个文本框控件
-  DFRobot_UI::sTextBox_t &tb = ui.creatText();
-  //在屏幕上创建一个文本框控件，根据自定义或初始化的参数绘制文本框
-  ui.draw(&tb);
-  /**
-   * @brief 设置触摸的手势识别区域
-   */
-  ui.setGestureArea(/*x=*/screen.width()/2-100,/*y=*/200,/*width=*/150,/*height=*/200);
-  while(true){
-     //刷新
-    ui.refresh();
-    // getGestures()： 获取手势
-    switch(ui.getGestures()){
-      //setText：使文本框显示字符串
-      case ui.SUPGLIDE : tb.setText("upwards slide"); break;
-      case ui.SDOWNGLIDE : tb.setText("down slide"); break;
-      case ui.SLEFTGLIDE : tb.setText("left slide"); break;
-      case ui.SRIGHTGLIDE : tb.setText("right slide"); break;
-      case ui.DLONGPRESSED : tb.setText("long press"); break;
-      case ui.SCLICK : tb.setText("click"); break;
-      case ui.DDOUBLECLICK : tb.setText("double click"); break;
-      default  :  break;
-      }
-  }
+
+ screen.drawRGBBitmap(/*x=*/(screen.width()-100)/2,/*y=*/(screen.height()-100)/2,/*bitmap gImage_Bitmap=*/(const unsigned uint16_t*)gImage_GrayscaleBitmap,/*w=*/100,/*h=*/100);
 }
 
 
 void loop()
 {
+
+    //getGestures()：识别手势
+    DFRobot_UI:: eGesture_t gesture = ui.getGestures();
+	
+   switch (gesture) {
+    case ui.DWROTATE : {
+      rotate++;
+      if(rotate>3) rotate=0;
+       screen.setRotation(rotate);
+       screen.drawRGBBitmap(/*x=*/(screen.width()-100)/2,/*y=*/(screen.height()-100)/2,/*bitmap gImage_Bitmap=*/(const unsigned uint16_t*)gImage_GrayscaleBitmap,/*w=*/100,/*h=*/100);
+
+      } break;
+    case ui.DCWROTATE : {
+      if(rotate<0) {rotate=3;}
+      else{
+        rotate--;
+      }
+      screen.setRotation(rotate);
+       screen.drawRGBBitmap(/*x=*/(screen.width()-100)/2,/*y=*/(screen.height()-100)/2,/*bitmap gImage_Bitmap=*/(const unsigned uint16_t*)gImage_GrayscaleBitmap,/*w=*/100,/*h=*/100);
+       
+       
+      } break;
+    case ui.NONE: {
+        return;
+      }
+  }
 
 
 }
