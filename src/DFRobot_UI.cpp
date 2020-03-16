@@ -541,7 +541,7 @@ void DFRobot_UI::drawKeyBoard(void *obj){
 
 	 te1.bgColor = 0;
 
-	 te1.fgColor = 0xc532;
+	 te1.fgColor = GREEN_RGB565;
 
      draw(&te1,10,10,lcdWidth -20,lcdHeight / 5);
 
@@ -569,7 +569,7 @@ void DFRobot_UI::drawKeyBoard(void *obj){
 	   kp->btn[button].text[1] = '\0';
 	   //memcpy(&kp->btn[button].text[1],'\0',1);
        kp->btn[button].fgColor = BLACK_RGB565;
-       kp->btn[button].bgColor = 0xe6B6B6;
+       kp->btn[button].bgColor = 0xe6B6;
        kp->btn[button].click  = 0;
        kp->btn[button].callBack = NULL;
        if (theme == MODERN) {
@@ -688,7 +688,8 @@ void DFRobot_UI::updateCoordinate()
   String str = _touch->scan();
   
   number  = pointNum(str);
-
+// Serial.println(str);
+// delay(300);
   position = (sPoint_t*)malloc(number * sizeof(sPoint_t));
 
 

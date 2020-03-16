@@ -51,15 +51,15 @@ void DFRobot_Touch::touchConfig(uint8_t *addr){
 }
 
 
-DFRobot_Touch_GTXXXX::DFRobot_Touch_GTXXXX(uint8_t addr, uint8_t rst, uint8_t irq)
+DFRobot_Touch_GT911::DFRobot_Touch_GT911(uint8_t addr, uint8_t rst, uint8_t irq)
   :DFRobot_Touch(&gdl_Dev_GTXXX_TOUCH_HW_IIC, addr, rst, irq){
   id = "";
   memset(_p, 0, sizeof(_p));
 }
-DFRobot_Touch_GTXXXX::~DFRobot_Touch_GTXXXX(){
+DFRobot_Touch_GT911::~DFRobot_Touch_GT911(){
   
 }
-void DFRobot_Touch_GTXXXX::begin(uint32_t freq){
+void DFRobot_Touch_GT911::begin(uint32_t freq){
   initTouch();
   char temp[4]={0};//获取芯片id
   uint16_t sizeReg = 0;
@@ -70,6 +70,7 @@ void DFRobot_Touch_GTXXXX::begin(uint32_t freq){
       _if.dev->addr = (uint8_t *)touchGt5688ConfigTable;
       sizeReg = 0x8051;
   }else if(id == "911"){
+
       _if.dev->addr = (uint8_t *)touchGT911ConfigTable;
       sizeReg = 0x8048;
   }else{
@@ -85,7 +86,7 @@ void DFRobot_Touch_GTXXXX::begin(uint32_t freq){
   //Serial.println("_size.xw = ");Serial.println(_size.xw);
   //Serial.println("_size.yh = ");Serial.println(_size.yh);
 }
-String DFRobot_Touch_GTXXXX::scan(){
+String DFRobot_Touch_GT911::scan(){
   uint8_t flag = 0;
   uint8_t val = 0x00;
   String s = "";
@@ -110,10 +111,11 @@ String DFRobot_Touch_GTXXXX::scan(){
           }
       }
   }
+  //Serial.println(s);
   if(s.length() == 0){
      s = "255,0,0,0,0 ";
   }
-  delay(20);
+  delay(10);
   _points = s;
   return s;
 }

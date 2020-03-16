@@ -1,6 +1,6 @@
 /*!
- * @file UI_gesture.ino
- * @brief 两根手指左旋转或右旋转 改变显示图片的方向
+ * @file rotate.ino
+ * @brief 两根手指左旋转或右旋转 改变显示的方向
  * @n 本示例支持的主板有Mega2560, FireBeetle-ESP32, FireBeetle-ESP8266, FireBeetle-M0
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -22,7 +22,7 @@
 #define TFT_DC  7
 #define TFT_CS  5
 #define TFT_RST 6
-#define TOUCH_CS 2
+#define TOUCH_CS A3
 /*ESP32 and ESP8266*/
 #elif defined(ESP32) || defined(ESP8266)
 #define TFT_DC  D3
@@ -31,16 +31,16 @@
 #define TOUCH_CS D6
 /*AVR系列主板*/
 #else
-#define TFT_DC  40
-#define TFT_CS  41
-#define TFT_RST 42
+#define TFT_DC  2
+#define TFT_CS  3
+#define TFT_RST 4
 #define TOUCH_CS 5
 #endif
 
 /**
  * @brief Constructor  当触摸采用Gt911芯片时，可以调用此构造函数
  */
-DFRobot_Touch_GTXXXX touch;
+DFRobot_Touch_GT911 touch;
  
 /**
  * @brief Constructor  当屏采用硬件SPI通信，驱动IC是ILI9488，屏幕分辨率是320x480时，可以调用此构造函数
@@ -63,9 +63,10 @@ void setup()
 {
   
   Serial.begin(9600);
+  //UI初始化
   ui.begin();
-
- screen.drawRGBBitmap(/*x=*/(screen.width()-100)/2,/*y=*/(screen.height()-100)/2,/*bitmap gImage_Bitmap=*/(const unsigned uint16_t*)gImage_GrayscaleBitmap,/*w=*/100,/*h=*/100);
+  //绘制图片
+  screen.drawRGBBitmap(/*x=*/(screen.width()-100)/2,/*y=*/(screen.height()-100)/2,/*bitmap gImage_Bitmap=*/(const unsigned uint16_t*)gImage_GrayscaleBitmap,/*w=*/100,/*h=*/100);
 }
 
 
@@ -76,19 +77,22 @@ void loop()
     DFRobot_UI:: eGesture_t gesture = ui.getGestures();
 	
    switch (gesture) {
+	//顺时针旋转
     case ui.DWROTATE : {
       rotate++;
       if(rotate>3) rotate=0;
+	  //设置屏幕显示方向
        screen.setRotation(rotate);
        screen.drawRGBBitmap(/*x=*/(screen.width()-100)/2,/*y=*/(screen.height()-100)/2,/*bitmap gImage_Bitmap=*/(const unsigned uint16_t*)gImage_GrayscaleBitmap,/*w=*/100,/*h=*/100);
 
       } break;
+    //逆时针旋转
     case ui.DCWROTATE : {
       if(rotate<0) {rotate=3;}
       else{
         rotate--;
       }
-      screen.setRotation(rotate);
+       screen.setRotation(rotate);
        screen.drawRGBBitmap(/*x=*/(screen.width()-100)/2,/*y=*/(screen.height()-100)/2,/*bitmap gImage_Bitmap=*/(const unsigned uint16_t*)gImage_GrayscaleBitmap,/*w=*/100,/*h=*/100);
        
        

@@ -2,7 +2,7 @@
 #include "DFRobot_Gesture.h"
 #include <math.h>
 
-DFRobot_Gesture::eGesture_t DFRobot_Gesture::twoFingers(uint8_t release,uint8_t number){
+DFRobot_Gesture::eGesture_t DFRobot_Gesture::fingers(uint8_t release,uint8_t number){
     uint8_t t = 0;
 	uint8_t i = 0;
 	uint8_t num1 = 0;
@@ -60,7 +60,7 @@ DFRobot_Gesture::eGesture_t DFRobot_Gesture::twoFingers(uint8_t release,uint8_t 
 		
 		
 		eGesture_t ges1;
-		distance_click =  clickCount();
+		distanceClick =  clickCount();
 		switch(number){
 			case 1: ges1 = getGestureOne(pointe(1));break;
 			case 2: ges1 = getGestureTwo(pointe(1),pointe(2));break;
@@ -79,7 +79,7 @@ DFRobot_Gesture::eGesture_t DFRobot_Gesture::twoFingers(uint8_t release,uint8_t 
 		lastGesture = NONE;
 	    return SCLICK;
 	}
-	if(number == 1 &&  millis() - timer1>1600 && point == 1 && longpressed == 0 && distance_click<100){
+	if(number == 1 &&  millis() - timer1>1600 && point == 1 && longpressed == 0 && distanceClick<100){
 		longpressed = 1;
 		lastGesture = DLONGPRESSED;
 		return DLONGPRESSED;
@@ -91,16 +91,16 @@ uint16_t DFRobot_Gesture::clickCount(){
 uint16_t distance1;
 
 
-	int x1 = (touchge[0].pointx[0] - click_oldx);
-	int y1 = (touchge[0].pointy[0] - click_oldy);
+	int x1 = (touchge[0].pointx[0] - clickOldx);
+	int y1 = (touchge[0].pointy[0] - clickOldy);
 return sqrtf((unsigned long)x1*x1+(unsigned long)y1*y1);
 
 }
 uint8_t DFRobot_Gesture::bfDistance(){
-  int olddis_x = touchge[1].pointx[0] > touchge[0].pointx[0] ? (touchge[1].pointx[0]- touchge[0].pointx[0]) :(touchge[0].pointx[0] - touchge[1].pointx[0]);
-  int olddis_y = touchge[1].pointy[0] > touchge[0].pointy[0] ? (touchge[1].pointy[0]- touchge[0].pointy[0]) :(touchge[0].pointy[0] - touchge[1].pointy[0]);
-  int dis_x = touchge[1].pointx[2] > touchge[0].pointx[2] ? (touchge[1].pointx[2]- touchge[0].pointx[2]) :(touchge[0].pointx[2] - touchge[1].pointx[2]);
-  int dis_y = touchge[1].pointy[2] > touchge[0].pointy[2] ? (touchge[1].pointy[2]- touchge[0].pointy[2]) :(touchge[0].pointy[2] - touchge[1].pointy[2]);
+  int olddisX = touchge[1].pointx[0] > touchge[0].pointx[0] ? (touchge[1].pointx[0]- touchge[0].pointx[0]) :(touchge[0].pointx[0] - touchge[1].pointx[0]);
+  int olddisY = touchge[1].pointy[0] > touchge[0].pointy[0] ? (touchge[1].pointy[0]- touchge[0].pointy[0]) :(touchge[0].pointy[0] - touchge[1].pointy[0]);
+  int disX = touchge[1].pointx[2] > touchge[0].pointx[2] ? (touchge[1].pointx[2]- touchge[0].pointx[2]) :(touchge[0].pointx[2] - touchge[1].pointx[2]);
+  int disY = touchge[1].pointy[2] > touchge[0].pointy[2] ? (touchge[1].pointy[2]- touchge[0].pointy[2]) :(touchge[0].pointy[2] - touchge[1].pointy[2]);
   int d2 ;
 	int x1 = (touchge[1].pointx[2] - touchge[0].pointx[2]);
 	int y1 = (touchge[1].pointy[2] - touchge[0].pointy[2]);
@@ -129,8 +129,8 @@ uint8_t DFRobot_Gesture::bfDistance(){
  // Serial.print("distance1: ");
   // Serial.println(distance);
   
-	change_x = dis_x > olddis_x ?(dis_x - olddis_x):(olddis_x - dis_x);
-	change_y = dis_y > olddis_y ?(dis_y - olddis_y):(olddis_y - dis_y);
+	changeX = disX > olddisX ?(disX - olddisX):(olddisX - disX);
+	changeY = disY > olddisY ?(disY - olddisY):(olddisY - disY);
 	if(d2 > distance) {
 	  change = d2-distance;
 		return 1;
@@ -236,8 +236,8 @@ uint16_t DFRobot_Gesture::minp(uint16_t num1,uint16_t num2,uint16_t num3){
 	min = num1<=num2 ? num1 :num2;
 	return min<=num3 ? min :num3;
 }
-DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureOne(uint8_t pointOne){
-   if(pointOne == CLICK &&  lastGesture != SCLICK && distance_click<30 )
+DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureOne(eDir_t pointOne){
+   if(pointOne == CLICK &&  lastGesture != SCLICK && distanceClick<30 )
    {
 	     timer2 = millis();
 		 click = 1;
@@ -294,25 +294,6 @@ uint8_t DFRobot_Gesture::judgeRotate(){
 	y2 = 0 - touchge[0].pointy[1];	
 	x3 = touchge[0].pointx[2];
 	y3 = 0 - touchge[0].pointy[2];
-	/*
-	int16_t midDotx = (touchge[0].pointx[0]+touchge[0].pointx[2]) /2;
-    int16_t midDoty = ((0-touchge[0].pointy[0])+(0-touchge[0].pointx[2])) /2;
-    int16_t roundDotx = (touchge[0].pointx[0]+touchge[1].pointx[0]) /2;
-	int16_t roundDoty = ((0-touchge[0].pointy[0])+(0-touchge[1].pointx[0])) /2;
-    disx = (midDotx - x2)*(midDotx - x2);
-	disy = (midDoty - y2)*(midDoty - y2);
-	d1 = sqrtf(disx+disy);
-    disx = (roundDotx - midDotx)*(roundDotx - midDotx);
-	disy = (roundDoty - midDoty)*(roundDoty - midDoty);
-	d2 = sqrtf(disx+disy);
-	
-	if(d2 >d1) concave = true;
-	else  concave = false;
-	
-	
-	if(concave == true && )
-		*/
-	
 	px12 = x2-x1;
 	py12 = y2-y1;
 	
@@ -331,7 +312,7 @@ uint8_t DFRobot_Gesture::judgeRotate(){
 }
 DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureTwo(eDir_t pointOne,eDir_t pointTwo){
   uint8_t dir = bfDistance();
-  if(pointOne == CLICK && pointTwo == CLICK && distance_click<30){
+  if(pointOne == CLICK && pointTwo == CLICK && distanceClick<30){
 	   return DCLICK;
 	 }
 	else if((pointOne == LEFT || pointOne == LETTUP || pointOne == LEFTDOWN) && (pointTwo == LEFT || pointTwo == LETTUP || pointTwo == LEFTDOWN)){
@@ -352,7 +333,7 @@ DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureTwo(eDir_t pointOne,eDir_
 	else if(change > 100 && dir == 1){
 	  return MAGNIFY;
 	}
-	else if(change_x>30 &&change_y >30 && change<80){
+	else if(changeX>30 &&changeY >30 && change<80){
 		uint8_t dir1 = judgeRotate();
 		if( dir1 == 1) return DWROTATE;
 	    else if(dir1 == 0)return DCWROTATE;
@@ -367,8 +348,8 @@ DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureTwo(eDir_t pointOne,eDir_
 
 
 }
-DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureThree(uint8_t pointOne,uint8_t pointTwo,uint8_t pointThree){
-  if(pointOne ==CLICK && pointTwo ==CLICK && pointThree ==CLICK&& distance_click<30)
+DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureThree(eDir_t pointOne,eDir_t pointTwo,eDir_t pointThree){
+  if(pointOne ==CLICK && pointTwo ==CLICK && pointThree ==CLICK&& distanceClick<30)
 		return TCLICK;
 	else if((pointOne == LEFT || pointOne == LETTUP || pointOne == LEFTDOWN) && (pointTwo == LEFT || pointTwo == LETTUP || pointTwo == LEFTDOWN)&&(pointThree == LEFT || pointThree == LETTUP || pointThree == LEFTDOWN))
     return TLEFTGLIDE;
@@ -381,14 +362,14 @@ DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureThree(uint8_t pointOne,ui
 	else
 		return NONE;
 }
-DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureFour(uint8_t pointOne,uint8_t pointTwo,uint8_t pointThree,uint8_t pointFour){
+DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureFour(eDir_t pointOne,eDir_t pointTwo,eDir_t pointThree,eDir_t pointFour){
     if(pointOne ==CLICK && pointTwo ==CLICK && pointThree ==CLICK&& pointFour ==CLICK)
 		   return WCLICK;
 		else
 		   return NONE;
 
 }
-DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureFive(uint8_t pointOne,uint8_t pointTwo,uint8_t pointThree,uint8_t pointFour,uint8_t pointFive){
+DFRobot_Gesture::eGesture_t DFRobot_Gesture::getGestureFive(eDir_t pointOne,eDir_t pointTwo,eDir_t pointThree,eDir_t pointFour,eDir_t pointFive){
     if(pointOne ==CLICK && pointTwo ==CLICK && pointThree ==CLICK&& pointFour ==CLICK&& pointFive ==CLICK)
 		   return PCLICK;
 		else
@@ -401,8 +382,8 @@ DFRobot_Gesture::eGesture_t DFRobot_Gesture::gesture(String str){
 	eGesture_t gesture =NONE;
 	
 	if(lastPN==0 && number >=1){
-	    click_oldx = tpDev.x[0];
-		click_oldy = tpDev.y[0];
+	    clickOldx = tpDev.x[0];
+		clickOldy = tpDev.y[0];
 		timer1 = millis();
 	}
 	
@@ -426,7 +407,7 @@ DFRobot_Gesture::eGesture_t DFRobot_Gesture::gesture(String str){
 	  point +=1;
 	}
   if(millis() -timer3 > 100){
-     gesture = twoFingers(release,number);    
+     gesture = fingers(release,number);    
   }
 	if(release == 1){
 	    timer3 = millis();

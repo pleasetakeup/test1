@@ -24,7 +24,7 @@
 #define TFT_DC  7
 #define TFT_CS  5
 #define TFT_RST 6
-#define TOUCH_CS 2
+#define TOUCH_CS A3
 /*ESP32 and ESP8266*/
 #elif defined(ESP32) || defined(ESP8266)
 #define TFT_DC  D3
@@ -41,7 +41,7 @@
 /**
  * @brief Constructor  当触摸采用Gt911芯片时，可以调用此构造函数
  */
-DFRobot_Touch_GTXXXX touch;
+DFRobot_Touch_GT911 touch;
  
 /**
  * @brief Constructor  当屏采用硬件SPI通信，驱动IC是ILI9488，屏幕分辨率是320x480时，可以调用此构造函数
