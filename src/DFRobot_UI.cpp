@@ -17,12 +17,6 @@
 
 void DFRobot_UI::buttonEvent(void *btn1)
 {
-	
- // Serial.println(ob->posx);
-  //Serial.println(ob->posy);
-  
- // Serial.println("按钮处理函数");
- // sObject_t * ob = (sObject_t *)obj;
   sButton_t *btn = (sButton_t *)btn1;
 
   if(_touch == NULL){
@@ -65,8 +59,11 @@ DFRobot_UI::DFRobot_UI(DFRobot_GDL *gdl,DFRobot_Touch *touch)
 void DFRobot_UI:: begin()
 {
 	
-	
-  bgColor = 0x00;
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+  bgColor = 0xffff;
+  #else
+    bgColor = 0x0000;
+  #endif
   pressed = 0 ;
   timer = 0 ;
   timer1 = 0 ;
@@ -130,9 +127,10 @@ DFRobot_UI::sButton_t &DFRobot_UI::creatButton(){
   buttonData->posy = 0;
   buttonData->width = lcdWidth / 4;
   buttonData->height = lcdHeight / 8;
-  buttonData->fgColor = BLACK_RGB565;
-  buttonData->bgColor = LIGHTGREY_RGB565;
-  buttonData->fontSize = 2;
+  buttonData->fgColor = 0xffff;
+  buttonData->lvColor = 0x751a;
+  buttonData->bgColor = 0x19cb;
+  buttonData->fontSize = 1;
   sObject_t* obj= &head;
 
   if(buttonData == NULL) while(1);
@@ -158,14 +156,14 @@ DFRobot_UI::sTextBox_t &DFRobot_UI::creatText(){
   textData->event = &DFRobot_UI::refreshTextBox;
  // textData->privateData = textData;
   textData->draw = &DFRobot_UI::drawText;
-  textData->posx = 10;
-  textData->posy = 10;
-  textData->width = lcdWidth -20;
-  textData->height = lcdHeight / 5;
+  textData->posx = 30;
+  textData->posy = 20;
+  textData->lvColor = 0xC618;
+  textData->width = lcdWidth -60;
+  textData->height = lcdHeight / 3.2;
   textData->fgColor = BLACK_RGB565;
-  textData->bgColor = LIGHTGREY_RGB565;
-  
-  textData->fontSize = lcdHeight / 160;
+  textData->bgColor = 0xffff;
+  textData->fontSize = 1;
   sObject_t* obj= &head;
   //Serial.println("11");
   if(textData == NULL) while(1);
@@ -190,7 +188,9 @@ DFRobot_UI::sKeyPad_t &DFRobot_UI::creatKeyPad(){
   kbData->height= lcdHeight / 5;
   kbData->next = NULL;
   kbData->event = &DFRobot_UI::KeyBoardEvent;
-  //kbData->privateData = kbData;
+  kbData->lvColor = 0xC618;
+  kbData->bgColor = 0xffff;
+  kbData->fgColor = BLACK_RGB565;
   kbData->draw = &DFRobot_UI::drawKeyBoard;
  // kbData->setCallBack = setKPCallback;
   sObject_t* obj= &head;
@@ -253,8 +253,9 @@ DFRobot_UI::sTableview_t &DFRobot_UI::creatTableview(){
   tbData->width=100;
   tbData->height= 100;
   tbData->next = NULL;
-  tbData->fgColor = LIGHTGREY_RGB565;
-  tbData->bgColor = bgColor;
+  tbData->fgColor = bgColor;
+  tbData->bgColor = 0x19cb;
+  tbData->lvColor = 0x751a;
   tbData->event = &DFRobot_UI::tableviewEvent;
   tbData->changeed = 0;
   //tb->privateData = tbData;
@@ -279,13 +280,13 @@ DFRobot_UI::sBar_t &DFRobot_UI::creatBar(){
   barData->width = lcdWidth - 50;
   barData->height = lcdHeight / 40;
   barData->fgColor = LIGHTGREY_RGB565;
-  barData->bgColor = 0xffff;
+  barData->bgColor = 0x19cb;
   barData->lastValue = 0;
   barData->value = 0;
   barData->mode=CIRCULAR;
   barData->color = WHITE_RGB565;
   barData->sliderPos = (barData->width * barData->value) / 100 + barData->posx ;
-  
+  barData->lvColor = 0x751a;
   barData->next = NULL;
   barData->event = &DFRobot_UI::barEvent;
  // barData->privateData = barData;
@@ -380,27 +381,41 @@ void DFRobot_UI::drawText(void *obj)
   uint8_t totalWord;
   uint8_t offset_x = 5;
   uint8_t offset_y = 5;
-  uint8_t singleWord = tb->width / (8 * tb->fontSize)-1 ;
-  totalWord = singleWord *(tb->height/(8* tb->fontSize)-1)-1;
-  if (theme == CLASSIC) {
+  uint8_t singleWord = tb->width / (13 * tb->fontSize)-1 ;
+  totalWord = singleWord *(tb->height/(16* tb->fontSize)-1)-1;
+  if (theme == MODERN) {
     _gdl->fillRoundRect(tb->posx - 2, tb->posy - 2, tb->width + 4, tb->height + 4, 12, DARKGREY_RGB565);
     _gdl->fillRoundRect(tb->posx, tb->posy, tb->width, tb->height, 10, tb->bgColor);
   }
   else {
+    #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+
+        drawRectP(tb->posx, tb->posy, tb->width,tb->height,4,tb->bgColor ,tb->lvColor,DARKGREY_RGB565,2);
+    #else
     _gdl->fillRect(tb->posx - 2, tb->posy - 2, tb->width + 4, tb->height + 4, DARKGREY_RGB565);
     _gdl->fillRect(tb->posx, tb->posy, tb->width, tb->height, tb->bgColor);
+    #endif
   }
   if (strlen(tb->text) < totalWord){
      totalWord = strlen(tb->text);
   }
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+  uint8_t fontHight = 16;
+  uint8_t fontWidth = 13;
+  #else
+  uint8_t fontHight = 8;
+  uint8_t fontWidth = 8;
+  #endif 
+  
+  
   for (uint8_t i = 0 ; i < totalWord; i++) {
-    _gdl->drawChar(offset_x + tb->posx + 8 * tb->fontSize * column, offset_y + tb->posy + 8 * tb->fontSize * line +5, tb->text[i] , LIGHTGREY_RGB565, tb->bgColor, tb->fontSize);
+    _gdl->drawChar(offset_x + tb->posx + fontHight * tb->fontSize * column, offset_y + tb->posy + fontWidth * tb->fontSize * line +5, tb->text[i] , LIGHTGREY_RGB565, tb->bgColor, tb->fontSize);
     column++;
-    if (column >= tb->width / (8 * tb->fontSize) - 1) {
+    if (column >= tb->width / (fontWidth * tb->fontSize) - 1) {
       column = 0 ;
       line++;
     }
-    if (line > tb->height / (8 * tb->fontSize) - 1) return;
+    if (line > tb->height / (fontHight * tb->fontSize) - 1) return;
     tb->cursorx = column;
     tb->cursory = line;
   }
@@ -445,17 +460,28 @@ void DFRobot_UI::refreshTextBox(void *obj)
   uint8_t line = 0 ;
   uint8_t offset_x, offset_y;
   uint8_t totalWord;
-
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+  uint8_t fontHight = 16;
+  uint8_t fontWidth = 13;
+  uint8_t fontOffset = 12;
+  _gdl->setTextSize(tb->fontSize);
+  _gdl->setFont(&FreeSans9pt7b);//设置字体为FreeMono12pt7b
+  #else
+    uint8_t fontOffset = 0;
+  uint8_t fontHight = 8;
+  uint8_t fontWidth = 8;
+  #endif 
+  
 
   if(_touch == NULL){
     return;
   }
-  uint8_t singleWord = tb->width / (8 * tb->fontSize) -1;
-  if (tb->height/(8* tb->fontSize)<2){
+  uint8_t singleWord = tb->width / (fontWidth * tb->fontSize) -1;
+  if (tb->height/(fontWidth* tb->fontSize)<2){
       totalWord = singleWord-2;
   }
   else{
-       totalWord = singleWord *(tb->height/(8* tb->fontSize)-1)-2;
+       totalWord = singleWord *(tb->height/(fontHight* tb->fontSize)-1)-2;
   }
   offset_x = 5;
   offset_y = 5 ;
@@ -463,8 +489,8 @@ void DFRobot_UI::refreshTextBox(void *obj)
   if(position[0].x > tb->posx && position[0].x < tb->posx +tb->width && position[0].y > tb->posy && position[0].y < tb->posy + tb->height){
      tb->cursorx=strlen(tb->text) % singleWord;
      tb->cursory = strlen(tb->text) / singleWord;
-     cursorPosx = tb->posx + offset_x + ((tb->fontSize) * 8) * (tb->cursorx) ;
-     cursorPosy = tb->posy + offset_y + (tb->fontSize) * 8 * (tb->cursory);
+     cursorPosx = tb->posx + offset_x + ((tb->fontSize) * fontWidth) * (tb->cursorx) ;
+     cursorPosy = tb->posy + offset_y + (tb->fontSize) * fontHight * (tb->cursory);
   }
  if(cursorPosx >= tb->posx && cursorPosx <= tb->posx +tb->width && cursorPosy >= tb->posy && cursorPosy <= tb->posy + tb->height){
     tb->selected = true;
@@ -478,7 +504,7 @@ void DFRobot_UI::refreshTextBox(void *obj)
   
   if (tb->state == DRAWTEXT) {
     if (theme == CLASSIC ) {
-      _gdl->fillRoundRect(tb->posx, tb->posy, tb->width, tb->height, 10, tb->bgColor);
+      _gdl->fillRoundRect(tb->posx, tb->posy, tb->width, tb->height, 4, tb->bgColor);
     }
     else {
       _gdl->fillRect(tb->posx, tb->posy, tb->width, tb->height, tb->bgColor);
@@ -490,13 +516,16 @@ void DFRobot_UI::refreshTextBox(void *obj)
        totalWord = strlen(tb->text);
     }
     for (uint8_t i = 0 ; i < totalWord; i++) {
-      _gdl->drawChar(offset_x + tb->posx + 8 * tb->fontSize * column, offset_y + tb->posy + 8 * tb->fontSize * line, tb->text[i] , tb->fgColor, tb->bgColor, tb->fontSize);
+        _gdl->setCursor(offset_x + tb->posx + fontWidth * tb->fontSize * column,offset_y + tb->posy + fontHight * tb->fontSize * line+fontOffset);
+	    _gdl->setTextColor(tb->fgColor);
+        _gdl->print(tb->text[i]);
+      //_gdl->drawChar(offset_x + tb->posx + 8 * tb->fontSize * column, offset_y + tb->posy + 8 * tb->fontSize * line, tb->text[i] , tb->fgColor, tb->bgColor, tb->fontSize);
       column++;
-      if (column >= tb->width / (8 * tb->fontSize) - 1) {
+      if (column >= tb->width / (fontWidth * tb->fontSize) - 1) {
         column = 0 ;
         line++;
       }
-      if (line > tb->height / (8 * tb->fontSize) - 1) return;
+      if (line > tb->height / (fontHight * tb->fontSize) - 1) return;
       tb->cursorx = column;
       tb->cursory = line;
     }
@@ -505,9 +534,9 @@ void DFRobot_UI::refreshTextBox(void *obj)
     tb->text[strlen(tb->text) - 1] = '\0';
     tb->cursorx = strlen(tb->text) % singleWord;
     tb->cursory = strlen(tb->text) / singleWord;
-    _gdl->fillRect(tb->cursorx * (8 * tb->fontSize) + offset_x + tb->posx, tb->cursory * (8 * tb->fontSize) + offset_y + tb->posy, 8 * tb->fontSize, 8 * tb->fontSize, tb->bgColor);
+    _gdl->fillRect(tb->cursorx * (fontWidth * tb->fontSize) + offset_x + tb->posx, tb->cursory * (fontHight * tb->fontSize) + offset_y + tb->posy, fontWidth * tb->fontSize, fontHight * tb->fontSize, tb->bgColor);
     tb->state = NOCHANGE;
-    if (line > tb->height / (8 * tb->fontSize) - 1) return;
+    if (line > tb->height / (fontWidth * tb->fontSize) - 1) return;
 
   }
   else if (tb->state == ADDCHAR) {
@@ -515,11 +544,14 @@ void DFRobot_UI::refreshTextBox(void *obj)
     if (strlen(tb->text) > totalWord) return;
     tb->text[strlen(tb->text) + 1] = '\0';
     tb->text[strlen(tb->text)] =  tb->cache;
-    _gdl->drawChar(tb->cursorx * (8 * tb->fontSize) + offset_x + tb->posx, tb->cursory * (8 * tb->fontSize) + offset_y + tb->posy, tb->cache , tb->fgColor, tb->bgColor, tb->fontSize);
+        _gdl->setCursor(tb->cursorx * (fontWidth * tb->fontSize) + offset_x + tb->posx,tb->cursory * (fontHight * tb->fontSize)+fontOffset + offset_y + tb->posy);
+	    _gdl->setTextColor(tb->fgColor);
+        _gdl->print(tb->cache);
+    //_gdl->drawChar(tb->cursorx * (8 * tb->fontSize) + offset_x + tb->posx, tb->cursory * (8 * tb->fontSize) + offset_y + tb->posy, tb->cache , tb->fgColor, tb->bgColor, tb->fontSize);
     tb->cursorx = strlen(tb->text) % singleWord;
     tb->cursory = strlen(tb->text) / singleWord;
 
-    if (line > tb->height / (8 * tb->fontSize) - 1) return;
+    if (line > tb->height / (fontHight * tb->fontSize) - 1) return;
   }
   if(tb->selected == true){
     drawCursor(tb, offset_x, offset_y, 0);
@@ -539,11 +571,8 @@ void DFRobot_UI::drawKeyBoard(void *obj){
 
      sTextBox_t &te1= creatText();
 
-	 te1.bgColor = 0;
 
-	 te1.fgColor = GREEN_RGB565;
-
-     draw(&te1,10,10,lcdWidth -20,lcdHeight / 5);
+     draw(&te1);
 
 	 kp->textBox = &te1;
 
@@ -557,19 +586,36 @@ void DFRobot_UI::drawKeyBoard(void *obj){
   kp->posx = 0;
   kp->posy = lcdHeight-lcdHeight/b-1;
   uint8_t button = 0;
- 
+  //_gdl->fillRoundRectP(kp->posx+11, kp->posy-5+1, lcdWidth-22, lcdHeight -kp->posy-2,3,kp->bgColor,kp->lvColor);
+  //_gdl->drawRoundRect(kp->posx+10, kp->posy-5, lcdWidth-20, lcdHeight -kp->posy,5,DARKGREY_RGB565);
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+  drawRectP(kp->posx+10, kp->posy-5, lcdWidth-20, lcdHeight -kp->posy,3,kp->bgColor,kp->lvColor,DARKGREY_RGB565,1);
+  #endif
   for(uint8_t i = 0 ; i < 4 ; i++){
      for(uint8_t j = 0 ; j < 3 ; j++){
+      #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+	   kp->btn[button].fontSize = 1 ;
+       kp->btn[button].width = (lcdWidth-30)/3-1-8;
+      kp->btn[button].height = (lcdHeight/b - 3)/4-1-6;
+     kp->btn[button].bgColor = 0x19cb;
+	   kp->btn[button].lvColor = 0x751a;
+       kp->btn[button].posx =  kp->posx + j*((lcdWidth-30)/3)+20;
+	  #else
        kp->btn[button].fontSize = (lcdHeight * 3) / 480 ;
        kp->btn[button].width = (lcdWidth-2)/3-1;
        kp->btn[button].height = (lcdHeight/b - 3)/4-1;
        kp->btn[button].posx =  kp->posx + j*((lcdWidth-2)/3)+2;
+       kp->btn[button].bgColor = 0xe6B6;
+	  #endif
+
+
+
        kp->btn[button].posy =  kp->posy + i*((lcdHeight/b - 3)/4);
        memcpy(kp->btn[button].text,&keyPad[button],1);
 	   kp->btn[button].text[1] = '\0';
 	   //memcpy(&kp->btn[button].text[1],'\0',1);
        kp->btn[button].fgColor = BLACK_RGB565;
-       kp->btn[button].bgColor = 0xe6B6;
+
        kp->btn[button].click  = 0;
        kp->btn[button].callBack = NULL;
        if (theme == MODERN) {
@@ -577,9 +623,15 @@ void DFRobot_UI::drawKeyBoard(void *obj){
          _gdl->fillRoundRect(kp->btn[button].posx, kp->btn[button].posy, kp->btn[button].width, kp->btn[button].height, 10, kp->btn[button].bgColor);
        }
        else {
-         _gdl->fillRect(kp->btn[button].posx, kp->btn[button].posy, kp->btn[button].width, kp->btn[button].height, kp->btn[button].bgColor);
+        // _gdl->fillRect(kp->btn[button].posx, kp->btn[button].posy, kp->btn[button].width, kp->btn[button].height, kp->btn[button].bgColor);
 
-        }
+    #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+        drawRectP(kp->btn[button].posx, kp->btn[button].posy, kp->btn[button].width, kp->btn[button].height,2,kp->btn[button].lvColor,kp->btn[button].bgColor,0x8c5,0);	
+        #else
+        _gdl->fillRect(kp->btn[button].posx, kp->btn[button].posy, kp->btn[button].width, kp->btn[button].height, kp->btn[button].bgColor);
+        #endif
+		
+		}
        drawkpString(&kp->btn[button],CENTER,CENTER,kp->btn[button].text);
        button++;
     }
@@ -602,7 +654,18 @@ void DFRobot_UI::KeyBoardEvent(void *obj){
        _gdl->fillRoundRect(kb->btn[i].posx - 1, kb->btn[i].posy - 1, kb->btn[i].width + 2, kb->btn[i].height + 2, 11, kb->btn[i].fgColor);
      }
      else {
-       _gdl->fillRect(kb->btn[i].posx, kb->btn[i].posy, kb->btn[i].width, kb->btn[i].height, kb->btn[i].fgColor);
+    #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+		//_gdl->drawRectShadowB(btn->posx-2, btn->posy-2, btn->width+4, btn->height+4,8,0x4208 ,0xffff);
+        //_gdl->fillRoundRectP(kb->btn[i].posx, kb->btn[i].posy, kb->btn[i].width, kb->btn[i].height,2,kb->btn[i].bgColor,kb->btn[i].lvColor);
+        //_gdl->drawRoundRect(kb->btn[i].posx-1, kb->btn[i].posy-1, kb->btn[i].width+2, kb->btn[i].height+2,4,0x8c5);
+        drawRectP(kb->btn[i].posx, kb->btn[i].posy, kb->btn[i].width, kb->btn[i].height,2,kb->btn[i].bgColor,kb->btn[i].lvColor,0x8c5,0);
+        //_gdl->drawRoundRect(kp->btn[button].posx-2, kp->btn[button].posy-2, kp->btn[button].width+4, kp->btn[button].height+4,4+4,DARKGREY_RGB565);
+		//_gdl->drawRoundRect(btn->posx-1, btn->posy-1, btn->width+2, btn->height+2,4+2,0x8c5);
+        //_gdl->drawRoundRect(btn->posx-2, btn->posy-2, btn->width+4, btn->height+4,4+4,0x8c5);
+		
+        #else
+        _gdl->fillRect(kb->btn[i].posx, kb->btn[i].posy, kb->btn[i].width, kb->btn[i].height, kb->btn[i].bgColor);
+        #endif
      }
     drawkpString(&kb->btn[i],CENTER,CENTER,&kb->btn[i].text[0]);
    }
@@ -613,7 +676,17 @@ void DFRobot_UI::KeyBoardEvent(void *obj){
       _gdl->fillRoundRect(kb->btn[i].posx, kb->btn[i].posy, kb->btn[i].width, kb->btn[i].height, 10, kb->btn[i].bgColor);
     }
     else {
-      _gdl->fillRect(kb->btn[i].posx, kb->btn[i].posy, kb->btn[i].width, kb->btn[i].height, kb->btn[i].bgColor);
+    #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+		//_gdl->drawRectShadowB(btn->posx-2, btn->posy-2, btn->width+4, btn->height+4,8,0x4208 ,0xffff);
+        drawRectP(kb->btn[i].posx, kb->btn[i].posy, kb->btn[i].width, kb->btn[i].height,2,kb->btn[i].lvColor,kb->btn[i].bgColor,0x8c5,0);
+        //_gdl->fillRoundRectP(kb->btn[i].posx, kb->btn[i].posy, kb->btn[i].width, kb->btn[i].height,2,kb->btn[i].lvColor,kb->btn[i].bgColor);
+        //_gdl->drawRoundRect(kb->btn[i].posx-1, kb->btn[i].posy-1, kb->btn[i].width+2, kb->btn[i].height+2,4,0x8c5);
+        //_gdl->drawRoundRect(kp->btn[button].posx-2, kp->btn[button].posy-2, kp->btn[button].width+4, kp->btn[button].height+4,4+4,DARKGREY_RGB565);
+		//_gdl->drawRoundRect(btn->posx-1, btn->posy-1, btn->width+2, btn->height+2,4+2,0x8c5);
+        //_gdl->drawRoundRect(btn->posx-2, btn->posy-2, btn->width+4, btn->height+4,4+4,0x8c5);
+        #else
+        _gdl->fillRect(kb->btn[i].posx, kb->btn[i].posy, kb->btn[i].width, kb->btn[i].height, kb->btn[i].bgColor);
+        #endif
     
      }
     drawkpString(&kb->btn[i],CENTER,CENTER,&kb->btn[i].text[0]);
@@ -624,10 +697,12 @@ void DFRobot_UI::KeyBoardEvent(void *obj){
     else{
       kb->textBox-> addChar(kb->btn[i].text[0]);
     } 
-
    }
   }
 }
+
+
+
 void DFRobot_UI::sKeyPad_t::setOutput(sTextBox_t * text)
 {
     this->textBox = text;
@@ -660,7 +735,18 @@ void DFRobot_UI::drawButton(void *obj) {
     _gdl->fillRoundRect(btn->posx, btn->posy, btn->width, btn->height, 10, btn->bgColor);
   }
   else {
-    _gdl->fillRect(btn->posx, btn->posy, btn->width, btn->height, btn->bgColor);
+  
+       #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+         drawRectP(btn->posx, btn->posy, btn->width, btn->height,4,btn->lvColor,btn->bgColor,0x8c5,1);
+		 // _gdl->drawRectShadowB(btn->posx-2, btn->posy-2, btn->width+4, btn->height+4,8,0x4208 ,0xffff);
+        // _gdl->fillRoundRectP(btn->posx, btn->posy, btn->width, btn->height,4,btn->lvColor,btn->bgColor);
+        // _gdl->drawRoundRect(btn->posx-1, btn->posy-1, btn->width+2, btn->height+2,4+2,0x8c5);
+         // _gdl->drawRoundRect(btn->posx-2, btn->posy-2, btn->width+4, btn->height+4,4+4,0x8c5);
+		
+        #else
+		//btn->bgColor = 0x00;
+        _gdl->fillRect(btn->posx, btn->posy, btn->width, btn->height,btn->bgColor);
+        #endif
 
   }
   //Serial.println(btn->text[0]);
@@ -743,8 +829,11 @@ void DFRobot_UI::drawClickButton(sObject_t *obj,char *text , bool click)
          _gdl->fillRoundRect(obj->posx, obj->posy, obj->width, obj->height, 10, obj->fgColor);
      }
      else {
-        _gdl->fillRect(obj->posx, obj->posy, obj->width, obj->height, obj->fgColor);
-
+    #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+        fillRoundRectP(obj->posx, obj->posy, obj->width, obj->height,4,obj->bgColor,obj->lvColor);
+    #else
+        _gdl->fillRect(obj->posx, obj->posy, obj->width, obj->height,obj->fgColor);
+        #endif
         }
 
   drawButtonString(obj, CENTER, CENTER, text,click);
@@ -762,7 +851,7 @@ void  DFRobot_UI::drawTableview(void *obj)
     tb->text[i].bgColor = CYAN_RGB565;
     tb->text[i].fgColor = BLACK_RGB565;
     tb->highLightPage = 0;
-    tb->text[i].fontSize = tb->text[i].width / (50) ;
+    tb->text[i].fontSize = 1;
     tb->text[i].click  = 0 ;
   }
 
@@ -772,8 +861,11 @@ void  DFRobot_UI::drawTableview(void *obj)
          _gdl->fillRoundRect(tb->text[i].posx, tb->text[i].posy, tb->text[i].width, tb->text[i].height, 10, tb->text[i].bgColor);
      }
      else {
+        #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+        drawRectP(tb->text[i].posx, tb->text[i].posy, tb->text[i].width, tb->text[i].height, 3,tb->lvColor,tb->bgColor,0x8c5,0);
+        #else
         _gdl->fillRect(tb->text[i].posx, tb->text[i].posy, tb->text[i].width, tb->text[i].height, tb->text[i].bgColor);
-
+        #endif
         }
        drawkpString(&tb->text[i],CENTER,CENTER,&tb->text[i].text[0]);
 	  // Serial.println(tb->text[i].text[0]);
@@ -815,7 +907,11 @@ void DFRobot_UI::tableviewEvent(void *obj)
        _gdl->fillRoundRect(tb->text[tb->page-1].posx - 1, tb->text[tb->page-1].posy - 1, tb->text[tb->page-1].width + 2, tb->text[tb->page-1].height + 2, 11, tb->text[tb->page-1].fgColor);
      }
      else {
-       _gdl->fillRect(tb->text[tb->page-1].posx, tb->text[tb->page-1].posy, tb->text[tb->page-1].width, tb->text[tb->page-1].height, tb->text[tb->page-1].fgColor);
+        #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+        drawRectP(tb->text[tb->page-1].posx, tb->text[tb->page-1].posy, tb->text[tb->page-1].width, tb->text[tb->page-1].height, 3,tb->bgColor,tb->lvColor,0x8c5,0);
+        #else
+        _gdl->fillRect(tb->text[tb->page-1].posx, tb->text[tb->page-1].posy, tb->text[tb->page-1].width, tb->text[tb->page-1].height, tb->text[tb->page-1].bgColor);
+        #endif
      }
     drawkpString(&tb->text[tb->page-1],CENTER,CENTER,&tb->text[tb->page-1].text[0]);
 	   if (theme == MODERN) {
@@ -823,15 +919,17 @@ void DFRobot_UI::tableviewEvent(void *obj)
          _gdl->fillRoundRect(tb->text[tb->page-1].posx, tb->text[tb->page-1].posy, tb->text[tb->page-1].width, tb->text[tb->page-1].height, 10, tb->text[tb->page-1].bgColor);
        }
       else {
+        #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+        drawRectP(tb->text[tb->page-1].posx, tb->text[tb->page-1].posy, tb->text[tb->page-1].width, tb->text[tb->page-1].height, 3,tb->lvColor,tb->bgColor,0x8c5,0);
+        #else
         _gdl->fillRect(tb->text[tb->page-1].posx, tb->text[tb->page-1].posy, tb->text[tb->page-1].width, tb->text[tb->page-1].height, tb->text[tb->page-1].bgColor);
-
+        #endif
         }
        drawkpString(&tb->text[tb->page-1],CENTER,CENTER,&tb->text[tb->page-1].text[0]);
        
         if (tb->highLightPage != (tb->page )) { 
           _gdl->fillRect(0, tb->text[tb->page-1].posy + tb->text[tb->page-1].height + 1 , 320, 400, bgColor);
-          _gdl->fillRect(tb->text[tb->page-1].posx, tb->text[tb->page-1].posy + tb->text[tb->page-1].height + 10, tb->text[tb->page-1].width , 10, COLOR_RGB565_PINK);
-            // Serial.println(i);
+          _gdl->fillRect(tb->text[tb->page-1].posx, tb->text[tb->page-1].posy + tb->text[tb->page-1].height+1, tb->text[tb->page-1].width , 10, DARKGREEN_RGB565);
           tb->highLightPage = tb->page ;
           if(tb->callback) tb->callback(&tb->highLightPage);
         }
@@ -899,10 +997,15 @@ void DFRobot_UI::drawBar(void *obj){
   
   uint8_t edgeWidth = lcdWidth / 160;
   if (bar->mode == BAR) {
-    _gdl->fillRoundRect(bar->posx - edgeWidth, bar->posy - edgeWidth, bar->width + 2 * edgeWidth, bar->height + 2 * edgeWidth, bar->height / 2, DARKGREY_RGB565);
-    _gdl->fillRoundRect(bar->posx, bar->posy, bar->width , bar->height, bar->height / 2, bar->bgColor);
-    
-	_gdl->setCursor((bar->posx + bar->width) / 2-10, bar->posy + bar->height + 5);
+    //_gdl->fillRoundRect(bar->posx - edgeWidth, bar->posy - edgeWidth, bar->width + 2 * edgeWidth, bar->height + 2 * edgeWidth, bar->height / 2, DARKGREY_RGB565);
+    //_gdl->fillRoundRect(bar->posx, bar->posy, bar->width , bar->height, bar->height / 2, bar->bgColor);
+        #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+       drawRectP(bar->posx,bar->posy,bar->width+12,bar->height+12,4,0xffff,0xC618,DARKGREY_RGB565,2);
+        #else
+       _gdl->fillRoundRect(bar->posx - edgeWidth, bar->posy - edgeWidth, bar->width + 2 * edgeWidth, bar->height + 2 * edgeWidth, bar->height / 2, DARKGREY_RGB565);
+       _gdl->fillRoundRect(bar->posx, bar->posy, bar->width , bar->height, bar->height / 2, bar->bgColor);
+        #endif
+    _gdl->setCursor((bar->posx + bar->width) / 2, bar->posy + bar->height + 18);
     
 	_gdl->setTextColor(bar->fgColor, bgColor);
     _gdl->setTextSize(2);
@@ -949,14 +1052,18 @@ void DFRobot_UI::barEvent(void *obj) {
   }
   if (bar->mode == BAR) {
     if(bar->lastValue == bar->value) return;
-    _gdl->fillRect((bar->posx + bar->width) / 2,bar->posy + bar->height + 5, 2*8*3 , 2*8, bgColor);
+    //_gdl->fillRect((bar->posx + bar->width) / 2,bar->posy + bar->height + 5, 2*8*3 , 2*8, bgColor);
     for (uint8_t i = bar->lastValue; i < bar->value + 1; i++) {
       
       bar->lastValue = bar->value;
       if(bar->value>96) continue;
-      _gdl->fillRoundRect(i * (bar->width) / 100+bar->posx, bar->posy, bar->height, bar->height, bar->height/2  , bar->fgColor);
-    }
-    _gdl->setCursor((bar->posx + bar->width) / 2-10, bar->posy + bar->height + 5);
+      #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+      drawRectP(i * (bar->width) / 100+bar->posx+6, bar->posy+3+bar->height/4, bar->height, bar->height, bar->height/2 ,bar->lvColor,bar->bgColor,0xffff,0);
+        #else
+	  _gdl->fillRoundRect(i * (bar->width) / 100+bar->posx, bar->posy, bar->height, bar->height, bar->height/2  , bar->fgColor);
+        #endif
+	}
+    _gdl->setCursor((bar->posx + bar->width) / 2, bar->posy + bar->height +  18);
     _gdl->setTextColor(bar->fgColor, bgColor);
     _gdl->setTextSize(2);
     _gdl->print(bar->value);
@@ -1185,8 +1292,17 @@ void DFRobot_UI::switchEvent(void *obj){
 void DFRobot_UI::drawCursor(sTextBox_t* obj, uint8_t offset_x, uint8_t offset_y, bool state)
 {
   //sTextBox_t *textData = (c *)obj->privateData;
-  uint16_t  x = obj->posx + offset_x + ((obj->fontSize) * 8) * (obj->cursorx) + 2;
-  uint16_t  y = obj->posy + offset_y + (obj->fontSize) * 8 * (obj->cursory);
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+  uint8_t fontHight = 16;
+  uint8_t fontWidth = 13;
+  uint8_t fontOffset = 12;
+  #else
+  uint8_t fontOffset = 0;
+  uint8_t fontHight = 8;
+  uint8_t fontWidth = 8;
+  #endif 
+  uint16_t  x = obj->posx + offset_x + ((obj->fontSize) * fontWidth) * (obj->cursorx) + 2;
+  uint16_t  y = obj->posy + offset_y + (obj->fontSize) * fontHight * (obj->cursory);
   uint16_t color ;
   if (state == 1 ) {
     color = obj->bgColor;
@@ -1195,7 +1311,7 @@ void DFRobot_UI::drawCursor(sTextBox_t* obj, uint8_t offset_x, uint8_t offset_y,
     color = obj->fgColor;
   }
 
-  _gdl->fillRect(x, y, 2, obj->fontSize * 8, color);
+  _gdl->fillRect(x, y, 2, obj->fontSize * fontHight, color);
 
 }
 /*
@@ -1263,55 +1379,102 @@ void DFRobot_UI::drawButtonString(sObject_t *obj, eLocation_t x, eLocation_t y, 
 
   int16_t po_x, po_y;
 
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+  uint8_t fontHight = 16;
+  uint8_t fontWidth = 13;
+  uint8_t fontOffset = 12;
+  _gdl->setTextSize(obj->fontSize);
+  _gdl->setFont(&FreeSans9pt7b);//设置字体为FreeMono12pt7b
+  #else
+  _gdl->setTextSize(obj->fontSize);
+  uint8_t fontOffset = 0;
+  uint8_t fontHight = 8;
+  uint8_t fontWidth = 8;
+  #endif 
   char b ;
+  uint8_t length = (obj->width) / ((fontWidth+1) * obj->fontSize);
+  if (length >= strlen(c)) length = strlen(c);
   if (x == CENTER && y == CENTER) {
 
+
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+      po_x =  obj->posx + obj->width / 2 - ((fontWidth+1) * obj->fontSize) / 2 ;
+    po_y =  obj->posy + obj->height / 2+4;
+  #else
     po_x =  obj->posx + obj->width / 2 - (4 * obj->fontSize) / 2 ;
-    
     po_y =  obj->posy + obj->height / 2 - (8 * obj->fontSize) / 2;
-    po_x = po_x - obj->fontSize * 8 * (strlen(c) - 1) * (0.5);
+  #endif 
+    po_x = po_x - obj->fontSize * (fontWidth+1) * (strlen(c) - 1) * (0.5);
     if(obj->posx >= po_x)  po_x = obj->posx+4;
   }
   else if (x == LEFT && y == CENTER) {
     po_x =  obj->posx ;
 
-    po_y =  obj->posy + obj->height / 2 - (8 * obj->fontSize) / 2 ;
+    po_y =  obj->posy + obj->height / 2 - ((fontWidth+1) * obj->fontSize) / 2 ;
   }
-  uint8_t length = (obj->width) / (8 * obj->fontSize);
-  if (length >= strlen(c)) length = strlen(c);
   for (uint16_t i = 0 ; i < length ; i++) {
     b = c[i];
     if (click == 0) {
-      _gdl->drawChar(po_x + i * 8 * obj->fontSize, po_y, b, obj->fgColor, obj->bgColor, obj->fontSize);
+        _gdl->setCursor(/*x=*/po_x + i * (fontWidth+1) * obj->fontSize,po_y);
+	    _gdl->setTextColor(obj->fgColor);
+        _gdl->print(b);
+      //_gdl->drawChar(po_x + i * 8 * obj->fontSize, po_y, b, obj->fgColor, obj->bgColor, obj->fontSize);
     }
     else {
-      _gdl->drawChar(po_x + i * 8 * obj->fontSize, po_y, b, obj->bgColor, obj->fgColor, obj->fontSize);
+        _gdl->setCursor(/*x=*/po_x + i * (fontWidth+1) * obj->fontSize,po_y);
+	    _gdl->setTextColor(obj->fgColor);
+        _gdl->print(b);
+      //_gdl->drawChar(po_x + i * 8 * obj->fontSize, po_y, b, obj->bgColor, obj->fgColor, obj->fontSize);
     }
   }
 }
 void DFRobot_UI::drawkpString(sButton_t *btn, eLocation_t x, eLocation_t y, char * c){
 int16_t po_x, po_y;
   //sButton_t* btn = kp->btn[num];
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+  uint8_t fontHight = 16;
+  uint8_t fontWidth = 13;
+  uint8_t fontOffset = 12;
+  _gdl->setTextSize(btn->fontSize);
+  _gdl->setFont(&FreeSans9pt7b);//设置字体为FreeMono12pt7b
+  #else
+  uint8_t fontOffset = 0;
+  uint8_t fontHight = 8;
+  _gdl->setTextSize(btn->fontSize);
+  uint8_t fontWidth = 8;
+  #endif 
+  uint8_t length = (btn->width) / (14 * btn->fontSize);
   char b ;
+  if (length >= strlen(c)) length = strlen(c);
   if (x == CENTER && y == CENTER) {
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+      po_x =  btn->posx + btn->width / 2 - ((fontWidth+1) * btn->fontSize) / 2 ;
+    po_y =  btn->posy + btn->height / 2+4;
+  #else
     po_x =  btn->posx + btn->width / 2 - (4 * btn->fontSize) / 2 ;
     po_y =  btn->posy + btn->height / 2 - (8 * btn->fontSize) / 2;
-    po_x = po_x - btn->fontSize * 8 * (strlen(c) - 1) * (0.5);
+  #endif 
+    po_x = po_x - btn->fontSize * (fontWidth+1) * (strlen(c) - 1) * (0.5);
+
   }
   else if (x == LEFT && y == CENTER) {
     po_x =  btn->posx ;
-    po_y =  btn->posy + btn->height / 2 - (8 * btn->fontSize) / 2 ;
+
+    po_y =  btn->posy + btn->height / 2 - ((fontWidth+1) * btn->fontSize) / 2 ;
   }
-  uint8_t length = (btn->width) / (8 * btn->fontSize);
-  if (length >= strlen(c)) length = strlen(c);
-  
   for (uint16_t i = 0 ; i < length ; i++) {
     b = c[i];
     if (btn->click == 0) {
-      _gdl->drawChar(po_x + i * 8 * btn->fontSize, po_y, b, btn->fgColor, btn->bgColor, btn->fontSize);
+        _gdl->setCursor(/*x=*/po_x + i * (fontWidth+1) * btn->fontSize,po_y);
+	    _gdl->setTextColor(btn->fgColor);
+        _gdl->print(b);
+      //_gdl->drawChar(po_x + i * 8 * btn->fontSize, po_y, b, btn->fgColor, btn->bgColor, btn->fontSize);
     }
     else {
-      _gdl->drawChar(po_x + i * 8 * btn->fontSize, po_y, b, btn->bgColor, btn->fgColor, btn->fontSize);
+        _gdl->setCursor(/*x=*/po_x + i * (fontWidth+1) * btn->fontSize,po_y);
+	    _gdl->setTextColor(btn->fgColor);
+        _gdl->print(b);
+      //_gdl->drawChar(po_x + i * 8 * btn->fontSize, po_y, b, btn->bgColor, btn->fgColor, btn->fontSize);
     }
   }
 
@@ -1511,3 +1674,206 @@ uint8_t DFRobot_UI::stringToPoint(String str){
   return b;
    
 }
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+void DFRobot_UI::fillRoundRectP(int16_t x, int16_t y, int16_t w,int16_t h, int16_t r, uint16_t hcolor,uint16_t color){
+    int16_t max_radius = ((w < h) ? w : h) / 2;
+    if(r > max_radius) r = max_radius;
+    lv_color_t  mcolor ;
+    lv_color_t  gcolor ;
+    mcolor.full = hcolor ;
+    gcolor.full = color ;
+        uint16_t posy = 0;  
+        for(uint16_t row = y+r; row <= y+h-r; row++) {
+            posy  =  row ;
+            uint16_t mix          = (uint32_t)((uint32_t)(y+h - posy) * 255) / (h);
+            lv_color_t act_color    = lv_color_mix(mcolor, gcolor, mix);
+            _gdl->drawFastHLine(x,posy,w,act_color.full);
+            
+        } 
+    fillCircleHelperP(x+r, y+r, r, 1, w-2*r-1,h-2*r, hcolor,color);
+    fillCircleHelperP(x+r , y+r, r, 2, w-2*r-1,h-2*r,hcolor, color);
+}
+void DFRobot_UI::fillCircleHelperP(int16_t x0, int16_t y0, int16_t r,uint8_t corners, int16_t delta,
+uint16_t height,uint16_t hcolor,uint16_t color){
+
+    int16_t f     = 1 - r;  // -5;
+    int16_t ddF_x = 1;     //
+    int16_t ddF_y = -2 * r; // -12
+    int16_t x     = 0;  //0
+    int16_t y     = r;  //6
+    int16_t px    = x;  //0
+    int16_t py    = y;//6
+    lv_color_t  mcolor ;
+    lv_color_t  gcolor ;
+    mcolor.full = hcolor ;
+    gcolor.full = color ;
+    delta++; // Avoid some +1's in the loop
+
+    while(x < y) {
+        if (f >= 0) {
+            y--;
+            ddF_y += 2;
+            f     += ddF_y;
+        }
+        x++;  //0+1
+        ddF_x += 2; //0+2
+        f     += ddF_x;
+        if(x < (y + 1)) {
+
+
+            if(corners & 1) {
+              uint16_t y1 = y0+height/2 -(y0-x) +(height/2+y0);
+              uint16_t mix          = (uint32_t)((uint32_t)(y0+height+r - y1) * 255) / (height+2*r);
+              lv_color_t act_color    = lv_color_mix(mcolor, gcolor, mix);
+              _gdl->drawFastHLine(x0-y, y1, 2*y+delta, act_color.full);
+        }
+            if(corners & 2) {
+              uint16_t mix          = (uint32_t)((uint32_t)(y0+height+r - y0+x) * 255) / (height+2*r);
+              lv_color_t act_color    = lv_color_mix(mcolor, gcolor, mix);
+			  _gdl->drawFastHLine(x0-y, y0-x, 2*y+delta, act_color.full);
+			}
+        }
+        if(y != py) {
+             
+            if(corners & 1) {
+		     uint16_t y1 = y0+height/2 -(y0-py) +(height/2 +y0);
+             uint16_t mix          = (uint32_t)((uint32_t)(y0+height+r - y1) * 255) / (height+2*r);
+             lv_color_t act_color    = lv_color_mix(mcolor, gcolor, mix);
+		      _gdl->drawFastHLine(x0-px, y1, 2*px+delta, act_color.full);
+			}
+            if(corners & 2) {
+			  uint16_t mix          = (uint32_t)((uint32_t)(y0+height+r - y0+py) * 255) / (height+2*r);
+              lv_color_t act_color    = lv_color_mix(mcolor, gcolor, mix);
+			  _gdl->drawFastHLine(x0-px, y0-py, 2*px+delta, act_color.full);
+			}
+            py = y;
+        }
+        px = x;
+    }
+  }
+void DFRobot_UI::drawRectShadowF(uint16_t x,uint16_t y,uint16_t width,uint16_t height,uint16_t r,uint16_t mColor ,uint16_t gColor){
+   
+   uint8_t swidth = 8;
+   uint32_t curve_x_size = ((r + 1) + 3) & ~0x3; /*Round to 4*/
+   curve_x_size *= sizeof(int16_t);
+   uint8_t line_1d_blur_size = (swidth + 3) & ~0x3;   
+   line_1d_blur_size *= sizeof(uint8_t);
+   uint8_t line_1d_blur[line_1d_blur_size];
+
+
+    for(uint8_t col = 0; col < swidth; col++) {
+        line_1d_blur[col] = (uint32_t)((uint32_t)(swidth - col) * 255/2 ) / (swidth);
+    }
+    for(uint8_t i=0;i <swidth;i++ ){
+        lv_color_t m ,g;
+        m.full = mColor;
+        g.full = gColor;
+        lv_color_t act_color = lv_color_mix(m, g, line_1d_blur[i]);
+        //fillRect(area_mid.x1,area_mid.y1,area_mid.x2-area_mid.x1,1,act_color.full);
+	   _gdl->drawRoundRect(x-i,y-i,width+2*i,height+2*i,r+i*1.5,act_color.full);
+	}
+}
+void DFRobot_UI::drawRectShadowB(uint16_t x,uint16_t y,uint16_t width,uint16_t height,uint16_t r,uint16_t mColor ,uint16_t gColor){
+  y=y-1;
+  r++;
+  uint8_t swidth = 5;
+   uint32_t curve_x_size = ((r + 1) + 3) & ~0x3; /*Round to 4*/
+   curve_x_size *= sizeof(int16_t);
+   uint8_t line_1d_blur_size = (swidth + 3) & ~0x3;   
+   line_1d_blur_size *= sizeof(uint8_t);
+   uint8_t draw_buf[curve_x_size+line_1d_blur_size];
+   int16_t *curve_x = (int16_t*)&draw_buf[0];
+   uint8_t *line_1d_blur = (uint8_t*)&draw_buf[curve_x_size];
+   lv_point_t circ;
+   int16_t circ_tmp;
+    circ.x = r;
+    circ.y = 0;
+    circ_tmp = 1 - r;
+
+    
+
+    while(circ.y <= circ.x) {
+        curve_x[LV_CIRC_OCT1_Y(circ)] = LV_CIRC_OCT1_X(circ);
+        curve_x[LV_CIRC_OCT2_Y(circ)] = LV_CIRC_OCT2_X(circ);
+    circ.y++;
+    if(circ_tmp <= 0) {
+        (circ_tmp) += 2 * circ.y + 1;
+    } else {
+        circ.x--;
+        (circ_tmp) += 2 * (circ.y - circ.x) + 1; 
+    }
+    }
+     int16_t col; 
+    for(col = 0; col < swidth; col++) {
+        line_1d_blur[col] = (uint32_t)((uint32_t)(swidth - col) * 255/2 ) / (swidth);
+    }
+    lv_point_t point_l;
+    lv_point_t point_r;
+    lv_area_t area_mid;
+    lv_point_t ofs_l;
+    lv_point_t ofs_r;
+    ofs_l.x = x + r ;
+    ofs_l.y = y +height-r;
+    ofs_r.x = x+width - r-1;
+    ofs_r.y = y +height- r ;
+    for(col = 0; col <= r; col++) {
+        point_l.x = ofs_l.x - col;
+        point_l.y = ofs_l.y + curve_x[col];
+        point_r.x = ofs_r.x + col;
+        point_r.y = ofs_r.y + curve_x[col];
+        uint8_t px_opa;
+        int16_t diff = col == 0 ? 0 : curve_x[col - 1] - curve_x[col];
+        uint16_t d;
+        for(d = 0; d < swidth; d++) {
+
+            if(diff == 0) {
+                px_opa = line_1d_blur[d];
+            } else {
+                px_opa = (uint16_t)((uint16_t)line_1d_blur[d] + line_1d_blur[d - diff]) >> 1;
+            }
+      lv_color_t m, g;
+      m.full = mColor;
+      g.full = gColor;
+        lv_color_t act_color = lv_color_mix(m, g, px_opa);
+             _gdl->drawPixel(point_l.x,point_l.y,act_color.full);
+            point_l.y++;
+            if(point_r.x > ofs_l.x) {
+      lv_color_t m ,g;
+      m.full = mColor;
+      g.full = gColor;
+        lv_color_t act_color = lv_color_mix(m, g, px_opa);
+             _gdl->drawPixel(point_r.x,point_r.y,act_color.full);
+            }
+            point_r.y++;
+        }
+    }
+    area_mid.x1 = ofs_l.x +1;
+    area_mid.y1 = ofs_l.y + r;
+    area_mid.x2 = ofs_r.x ;
+    area_mid.y2 = area_mid.y1;
+    uint16_t d;
+    for(d = 0; d < swidth; d++) {
+      lv_color_t m ,g;
+      m.full = mColor;
+      g.full = gColor;
+        lv_color_t act_color = lv_color_mix(m, g, line_1d_blur[d]);
+        _gdl->fillRect(area_mid.x1,area_mid.y1,area_mid.x2-area_mid.x1,1,act_color.full);
+        area_mid.y1++;
+        area_mid.y2++;
+    }
+}
+void DFRobot_UI::drawRectP(uint16_t x,uint16_t y,uint16_t width,uint16_t height,uint8_t radius,uint16_t mcolor,
+  uint16_t gcolor,uint16_t edgeColor,uint8_t shadow){
+  if(shadow != 0){
+     if(shadow == 1)
+       drawRectShadowB(x-2, y-2, width+4, height+4,radius+4,0x4208 ,bgColor);
+     else
+       drawRectShadowF(x, y, width, height,radius,0x4208 ,bgColor);
+  }
+  fillRoundRectP(x, y, width, height,radius,mcolor ,gcolor);
+  if(edgeColor != 0xffff){
+  _gdl->drawRoundRect(x-1, y-1, width+2, height+2,radius+2,edgeColor);
+  _gdl->drawRoundRect(x-2,y-2, width+4, height +4 ,radius+4,edgeColor);
+  }
+}
+  #endif

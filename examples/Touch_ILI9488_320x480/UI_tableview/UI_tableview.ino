@@ -2,7 +2,7 @@
  * @file UI_tableview.ino
  * @brief 在屏幕上创建一个tableview控件，用户可以自定义在屏幕上创建一个tableview控件的参数
  * @n 用户可以选择不同的页来显示不同的内容
- * @n 本示例支持的主板有Arduino Uno, Leonardo, Mega2560, FireBeetle-ESP32, FireBeetle-ESP8266, FireBeetle-M0
+ * @n 本示例支持的主板有Arduino Uno, Mega2560, FireBeetle-ESP32, FireBeetle-ESP8266, FireBeetle-M0
  * 
  * @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @licence     The MIT License (MIT)
@@ -48,7 +48,7 @@ DFRobot_Touch_GT911 touch;
  * @param cs  SPI通信的片选引脚
  * @param rst  屏的复位引脚
  */
- DFRobot_ILI9488_320x480_HW_SPI screen(TFT_DC,TFT_CS,TFT_RST);
+DFRobot_ILI9488_320x480_HW_SPI screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
 /*M0主板下DMA传输*/
 //DFRobot_ILI9488_320x480_DMA_SPI screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
 

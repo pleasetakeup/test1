@@ -14,6 +14,7 @@
 
 #include "Arduino.h"
 #include "DFRobot_GDL.h"
+#include "graphic.h"
 #include "DFRobot_Touch.h"
 #if defined (__AVR__)
 #define TOUCHPOINTS   1
@@ -117,6 +118,7 @@ public:
     uint16_t  width;/**<对象的宽度>**/
     uint16_t  height;/**<对象的高度>**/
     uint16_t fgColor;/**<对象字体的前景的颜色>**/
+    uint16_t lvColor;/**<渐变色>**/
     uint16_t bgColor;/**<对象字体的背景颜色>**/
     uint8_t fontSize;/**<控件字体元素的大小>**/
     drawingControl draw; /**<绘制控件的函数>**/
@@ -474,7 +476,13 @@ private:
   bool release(uint16_t x,uint16_t y);
   bool press(uint16_t x,uint16_t y);
   bool focus(uint16_t x,uint16_t y);
-  
+  #if defined(ESP32) || defined(ESP8266) ||  defined(ARDUINO_SAM_ZERO)
+  void fillRoundRectP(int16_t x, int16_t y, int16_t w,int16_t h, int16_t r, uint16_t hcolor,uint16_t color);
+  void fillCircleHelperP(int16_t x0, int16_t y0, int16_t r,uint8_t corners, int16_t delta,uint16_t width1 ,uint16_t hcolor,uint16_t color);
+  void drawRectShadowF(uint16_t x,uint16_t y,uint16_t width,uint16_t height,uint16_t r,uint16_t mColor ,uint16_t gColor);
+  void drawRectShadowB(uint16_t x,uint16_t y,uint16_t width,uint16_t height,uint16_t r,uint16_t mColor ,uint16_t gColor);
+  void drawRectP(uint16_t x,uint16_t y,uint16_t width,uint16_t height,uint8_t radius,uint16_t mcolor,uint16_t gcolor,uint16_t edgeColor,uint8_t shadow);
+  #endif
   sPoint_t * position;
   DFRobot_GDL *_gdl;
   eTheme_t theme;

@@ -2,7 +2,7 @@
    @file UI_contal.ino
    @brief 在屏幕上创建一个开关，文本框和滑条控件，用户可以这些控件的参数，也可以使用默认的参数
    @n 当用户使用控件时，会在文本框显示你当前的操作
-   @n 本示例支持的主板有Arduino Uno, Leonardo, Mega2560, FireBeetle-ESP32, FireBeetle-SP8266, FireBeetle-M0
+   @n 本示例支持的主板有Arduino Uno, Mega2560, FireBeetle-ESP32, FireBeetle-SP8266, FireBeetle-M0
    @n 需要文本框显示时，需要点击文本框以使光标移到文本框内
    @copyright  Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
    @licence     The MIT License (MIT)
@@ -49,7 +49,7 @@ DFRobot_Touch_GT911 touch;
  * @param cs  SPI通信的片选引脚
  * @param rst  屏的复位引脚
  */
- DFRobot_ILI9488_320x480_HW_SPI screen(TFT_DC,TFT_CS,TFT_RST);
+DFRobot_ILI9488_320x480_HW_SPI screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
 /*M0主板下DMA传输*/
 //DFRobot_ILI9488_320x480_DMA_SPI screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
 

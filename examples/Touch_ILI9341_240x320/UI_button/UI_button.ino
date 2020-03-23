@@ -1,7 +1,7 @@
 /*!
  * @file UI_button.ino
  * @brief 在屏幕上创建一个按钮控件，用户可以自定义按钮的参数
- * @n 示例里面创建了三个按钮A,B,C,按下A,B按钮会在文本框内显示，按下C按钮会删除文本框的一个字符
+ * @n 示例里面创建了三个按钮on,off,clr,按下on,off按钮会在文本框内显示，按下clr按钮会删除文本框的一个字符
  * @n 需要文本框显示时，需要点击文本框以使光标移到文本框内
  * @n 本示例支持的主板有Arduino Uno, Leonardo, Mega2560, FireBeetle-ESP32, FireBeetle-ESP8266, FireBeetle-M0
  * 
@@ -24,7 +24,7 @@
 #define TFT_DC  7
 #define TFT_CS  5
 #define TFT_RST 6
-#define TOUCH_CS 2
+#define TOUCH_CS A3
 /*ESP32 and ESP8266*/
 #elif defined(ESP32) || defined(ESP8266)
 #define TFT_DC  D3
@@ -47,16 +47,15 @@
 DFRobot_Touch_XPT2046 touch(TOUCH_CS);
  
 /**
- * @brief Constructor  当屏采用硬件SPI通信，驱动IC是st7789，屏幕分辨率是240x320时，可以调用此构造函数
+ * @brief Constructor  当屏采用硬件SPI通信，驱动IC是ILI9341，屏幕分辨率是240x320时，可以调用此构造函数
  * @param dc  SPI通信的命令/数据线引脚
  * @param cs  SPI通信的片选引脚
  * @param rst  屏的复位引脚
  */
-DFRobot_ILI9341_240x320_HW_SPI screen(TFT_DC,TFT_CS,TFT_RST);
-//DFRobot_ST7789_240x320_HW_SPI screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
+ 
+DFRobot_ILI9341_240x320_HW_SPI screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
 /*M0主板下DMA传输*/
-//DFRobot_ST7789_240x240_DMA_SPI screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
-//DFRobot_ST7789_240x320_DMA_SPI screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
+//DFRobot_ILI9341_240x320_DMA_SPI  screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
 
 
 /**

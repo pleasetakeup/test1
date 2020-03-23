@@ -43,12 +43,13 @@
 DFRobot_Touch_GT911 touch;
  
 /**
- * @brief Constructor  当屏采用硬件SPI通信，驱动IC是ILI9488，屏幕分辨率是320x480时，可以调用此构造函数
- * @param dc  SPI通信的命令/数据线引脚
- * @param cs  SPI通信的片选引脚
- * @param rst  屏的复位引脚
- */
- DFRobot_ILI9488_320x480_HW_SPI screen(TFT_DC,TFT_CS,TFT_RST);
+   @brief Constructor  构造函数
+   @param dc  SPI通信的命令/数据线引脚
+   @param cs  SPI通信的片选引脚
+   @param rst  屏的复位引脚
+*/
+
+DFRobot_ILI9488_320x480_HW_SPI screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
 /*M0主板下DMA传输*/
 //DFRobot_ILI9488_320x480_DMA_SPI screen(/*dc=*/TFT_DC,/*cs=*/TFT_CS,/*rst=*/TFT_RST);
 

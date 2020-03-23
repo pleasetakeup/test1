@@ -18,7 +18,7 @@ uint8_t interfaceComHardwareSPI(sGdlIF_t *p, uint8_t cmd, uint8_t *pBuf, uint32_
          sercom4.enableSPI();
 
       #else
-         p->pro.spi->beginTransaction(SPISettings(p->freq, MSBFIRST, SPI_MODE0));
+          p->pro.spi->beginTransaction(SPISettings(p->freq, MSBFIRST, SPI_MODE0));
       #endif
       #else
       #if defined(__AVR__)
@@ -355,5 +355,9 @@ uint8_t interfaceComHardwareSPI(sGdlIF_t *p, uint8_t cmd, uint8_t *pBuf, uint32_
   yield();
 #endif
   p->pro.spi->endTransaction();
+     #if defined(ARDUINO_SAM_ZERO)
+         SPI.setClockDivider(12); 
+     #endif
+
   return 1;
 }
